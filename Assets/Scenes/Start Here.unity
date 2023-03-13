@@ -13986,7 +13986,9 @@ GameObject:
   - component: {fileID: 1206544754405695171}
   - component: {fileID: 5797897616460753958}
   - component: {fileID: 5632456314055644689}
+  - component: {fileID: 5797897616460753963}
   - component: {fileID: 5797897616460753961}
+  - component: {fileID: 5797897616460753962}
   - component: {fileID: 5797897616460753960}
   - component: {fileID: 3914411123247451216}
   - component: {fileID: 219049321079590460}
@@ -46998,6 +47000,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedUpDown: 1
   inside: 0
+  dontDestroyOnLoad: 1
+  joystickDeadzone: 0.1
+  joystickFlySpeed: 1.2
+  headCamera: {fileID: 1206544755303185489}
+  cameraContainer: {fileID: 1206544754955745546}
+  cameraRubberBand:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &5797897616460753962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206544754405695169}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da972e462c4ae64baa1c9a3c46c430a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  headCamera: {fileID: 1206544755303185489}
+  cameraContainer: {fileID: 1206544754955745546}
+  cameraRubberBand:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  movementSpeed: 2
+  rotationSpeed: 360
+  maxHeadPitch: 40
+  minHeadPitch: -40
+--- !u!114 &5797897616460753963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206544754405695169}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81c9795a96c094f4cbde4d65546aa9b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   joystickDeadzone: 0.1
   joystickFlySpeed: 1.2
