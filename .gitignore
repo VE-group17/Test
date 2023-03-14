@@ -8,7 +8,7 @@
 **/Library/*
 
 # Except for XR directory
-!**/Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR
+!**/Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR*
 #!/Packages/com.ucl.ubiq/Runtime/XR
 
 #!/Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR
