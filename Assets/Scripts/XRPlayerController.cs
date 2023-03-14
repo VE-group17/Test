@@ -11,9 +11,10 @@ namespace Ubiq.XR
     
     public class XRPlayerController : MonoBehaviour
     {   
+        ///
         public float speedUpDown = 1f;
         public bool inside = false;
-        
+        ///
         
         public bool dontDestroyOnLoad = true;
 
@@ -55,7 +56,7 @@ namespace Ubiq.XR
 
             handControllers = GetComponentsInChildren<HandController>();
         }
-
+        ///
         private void OnTriggerEnter(Collider col)
         {
             if(col.gameObject.tag == "Ladder")
@@ -71,10 +72,12 @@ namespace Ubiq.XR
                 inside = !inside;
             } 
         }
-
+        ///
         private void Start()
         {   
+            ///
             inside = false;
+            ///
             foreach (var item in GetComponentsInChildren<TeleportRay>())
             {
                 item.OnTeleport.AddListener(OnTeleport);
@@ -150,7 +153,8 @@ namespace Ubiq.XR
                         }
                     }
                 }
-            } else {
+            } 
+            else {
                 foreach (var item in handControllers)
                 {
                     if (item.Right)
@@ -174,16 +178,21 @@ namespace Ubiq.XR
                         }
                     }
                 }
+
                 var headProjectionXZ = transform.InverseTransformPoint(headCamera.transform.position);
                 headProjectionXZ.y = 0;
                 userLocalPosition.x += (headProjectionXZ.x - userLocalPosition.x) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.x - userLocalPosition.x));
                 userLocalPosition.z += (headProjectionXZ.z - userLocalPosition.z) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.z - userLocalPosition.z));
                 userLocalPosition.y = 0;
+                ///
                 if (transform.position.y > 0.1f) {
                     transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
-                } else {
+                } 
+                else 
+                {
                     transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
                 }
+                ///
             }
         }
 

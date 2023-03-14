@@ -10,10 +10,10 @@ namespace Ubiq.XR
     public class DesktopPlayerController : MonoBehaviour
     {
         [NonSerialized]
-
+        ///
         public float speedUpDown = 1f;
         public bool inside = false;
-
+        ///
         private Vector3 velocity;
         private Vector3 userLocalPosition;
 
@@ -100,7 +100,7 @@ namespace Ubiq.XR
 
             transform.position += movement;
         }
-
+        ///
         private void OnTriggerEnter(Collider col)
         {
             if(col.gameObject.tag == "Ladder")
@@ -116,7 +116,7 @@ namespace Ubiq.XR
                 inside = !inside;
             } 
         }
-
+        ///
         private void OnGround()
         {
             var height = Mathf.Clamp(transform.InverseTransformPoint(headCamera.transform.position).y, 0.1f, float.PositiveInfinity);
@@ -168,6 +168,7 @@ namespace Ubiq.XR
                 transform.localEulerAngles = Vector3.zero;
                 cameraContainer.localEulerAngles = Vector3.zero;
             }
+            ///
             if(inside == true)
             {   
                 Vector3 movement = new Vector3(0f, 0f, 0f);
@@ -182,15 +183,21 @@ namespace Ubiq.XR
                 movement = movement.normalized * (movementSpeed) * Time.deltaTime;
                 movement = headCamera.transform.TransformDirection(movement);
                 transform.position += movement;
-            } else {
+            } 
+            
+            else 
+            {///
                 OnMouse();
                 OnKeys();
+                ///
                 if (transform.position.y > 0.1f) {
                     transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
                 } else {
                     transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
                 }
             }
+            ///
+            
             //OnGround(); //todo: finish implementation
         }
 
