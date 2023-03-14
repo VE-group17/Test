@@ -6,9 +6,8 @@
 # Ignore all files in Library directory
 Library/*
 
-# Except for ScriptAssemblies directory
-!Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR
-
+# Except for XR directory
+!/Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
