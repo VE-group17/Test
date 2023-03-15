@@ -22,11 +22,13 @@ public class TexturePainter : MonoBehaviour {
 	Color brushColor; //The selected color
 	int brushCounter=0,MAX_BRUSH_COUNT=1000; //To avoid having millions of brushes
 	bool saving=false; //Flag to check if we are saving the texture
+	void Start(){
 
+	}
 	
 	void Update () {
 		brushColor = ColorSelector.GetColor ();	//Updates our painted color with the selected color
-		// brushColor = Color.blue;
+		brushColor = Color.blue;
 		if (Input.GetMouseButton(0)) {
 			DoAction();
 		}
@@ -76,6 +78,7 @@ public class TexturePainter : MonoBehaviour {
 	bool HitTestUVPosition(ref Vector3 uvWorldPosition){
 		RaycastHit hit;
 		Vector3 cursorPos = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0.0f);
+		// Vector3 cursorPos = new Vector3 (0.0f, 0.0f, 0.0f);
 		Ray cursorRay=sceneCamera.ScreenPointToRay (cursorPos);
 		if (Physics.Raycast(cursorRay,out hit,200)){
 			MeshCollider meshCollider = hit.collider as MeshCollider;
@@ -124,7 +127,7 @@ public class TexturePainter : MonoBehaviour {
 		brushCursor.transform.localScale = Vector3.one * brushSize;
 	}
 
-	////////////////// OPTIONAL METHODS //////////////////
+	// ////////////////// OPTIONAL METHODS //////////////////
 
 	#if !UNITY_WEBPLAYER 
 		IEnumerator SaveTextureToFile(Texture2D savedTexture){		

@@ -29,13 +29,15 @@ public class ColorSelector : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetMouseButton (0)) {
-			UserInputUpdate ();
-		}
+		// if (Input.GetMouseButton (0)) {
+		// 	UserInputUpdate ();
+		// }
 	}
 
 	void UserInputUpdate(){
 		Vector3 cursorPos = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, (transform.position.z - refCamera.transform.position.z));
+		// Vector3 cursorPos = new Vector3 (0.0f, 0.0f, 0.0f);
+		
 		Ray cursorRay = refCamera.ScreenPointToRay (cursorPos);
 		RaycastHit hit = new RaycastHit ();
 		if(Physics.Raycast(cursorRay,out hit)){
