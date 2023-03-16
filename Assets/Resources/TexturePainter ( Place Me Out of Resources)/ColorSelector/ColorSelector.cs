@@ -29,16 +29,10 @@ public class ColorSelector : MonoBehaviour {
 	}
 
 	void Update () {
-<<<<<<< HEAD
 		if (Input.GetMouseButton(0))
 		{
 			UserInputUpdate();
 		}
-=======
-		// if (Input.GetMouseButton (0)) {
-		// 	UserInputUpdate ();
-		// }
->>>>>>> 301adbeb922b9d994ce58be6cc001564647186d2
 	}
 
 	void UserInputUpdate(){
