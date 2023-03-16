@@ -4,11 +4,20 @@
 #
 #/[Ll]ibrary/
 # Ignore all files in Library directory
-!/Library/
-**/Library/*
+#
+Library/*
 
 # Except for XR directory
-!**/Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR*
+!Library/PackageCache/
+Library/PackageCache/*
+!Library/PackageCache/com.ucl.ubiq@df6a61df00/
+Library/PackageCache/com.ucl.ubiq@df6a61df00/*
+!Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/
+Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/*
+!Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR/
+Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR/*
+
+#!Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR
 #!/Packages/com.ucl.ubiq/Runtime/XR
 
 #!/Library/PackageCache/com.ucl.ubiq@df6a61df00/Runtime/XR

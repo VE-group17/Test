@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using Ubiq.XR;
+<<<<<<< HEAD
 using Ubiq.Spawning;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +17,22 @@ using Ubiq.Samples;
 
 public enum Painter_BrushMode{PAINT,DECAL};
 public class TexturePainter : MonoBehaviour, IUseable {
+=======
+public enum Painter_BrushMode{PAINT,DECAL};
+public class TexturePainter : MonoBehaviour {
+>>>>>>> 301adbeb922b9d994ce58be6cc001564647186d2
 	public GameObject brushCursor,brushContainer; //The cursor that overlaps the model and our container for the brushes painted
 	public Camera sceneCamera,canvasCam;  //The camera that looks at the model, and the camera that looks at the canvas.
 	public Sprite cursorPaint,cursorDecal; // Cursor for the differen functions 
 	public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
 	public Material baseMaterial; // The material of our base texture (Were we will save the painted texture)
 
+<<<<<<< HEAD
 	bool PAINT = false; //Flag to check if use triger
 
 
+=======
+>>>>>>> 301adbeb922b9d994ce58be6cc001564647186d2
 	Painter_BrushMode mode; //Our painter mode (Paint brushes or decals)
 	public float brushSize=1.0f; //The size of our brush
 	Color brushColor; //The selected color
@@ -33,6 +41,7 @@ public class TexturePainter : MonoBehaviour, IUseable {
 	void Start(){
 
 	}
+<<<<<<< HEAD
 
     public void UnUse(Hand controller)
     {
@@ -46,11 +55,16 @@ public class TexturePainter : MonoBehaviour, IUseable {
     }
 
     void Update () {
+=======
+	
+	void Update () {
+>>>>>>> 301adbeb922b9d994ce58be6cc001564647186d2
 		brushColor = ColorSelector.GetColor ();	//Updates our painted color with the selected color
 		brushColor = Color.blue;
 		if (Input.GetMouseButton(0)) {
 			DoAction();
 		}
+<<<<<<< HEAD
 		if (PAINT)
 		{
             DoAction();
@@ -59,6 +73,12 @@ public class TexturePainter : MonoBehaviour, IUseable {
 	}
 
 	//The main action, instantiates a brush or decal enti＝＝j`ty at the clicked position on the UV map
+=======
+		UpdateBrushCursor ();
+	}
+
+	//The main action, instantiates a brush or decal entity at the clicked position on the UV map
+>>>>>>> 301adbeb922b9d994ce58be6cc001564647186d2
 	void DoAction(){	
 		if (saving)
 			return;
@@ -100,6 +120,7 @@ public class TexturePainter : MonoBehaviour, IUseable {
 	//Returns the position on the texuremap according to a hit in the mesh collider
 	bool HitTestUVPosition(ref Vector3 uvWorldPosition){
 		RaycastHit hit;
+<<<<<<< HEAD
 
         GameObject temp = GameObject.Find("spray can");
         Transform sprayTransform = temp.GetComponent<Transform>();
@@ -118,6 +139,12 @@ public class TexturePainter : MonoBehaviour, IUseable {
 
 
         if (Physics.Raycast(cursorRay,out hit,200)){
+=======
+		Vector3 cursorPos = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0.0f);
+		// Vector3 cursorPos = new Vector3 (0.0f, 0.0f, 0.0f);
+		Ray cursorRay=sceneCamera.ScreenPointToRay (cursorPos);
+		if (Physics.Raycast(cursorRay,out hit,200)){
+>>>>>>> 301adbeb922b9d994ce58be6cc001564647186d2
 			MeshCollider meshCollider = hit.collider as MeshCollider;
 			if (meshCollider == null || meshCollider.sharedMesh == null)
 				return false;			
