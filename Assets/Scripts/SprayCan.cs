@@ -13,7 +13,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private NetworkContext context;
     private bool owner;
     private Hand controller;
-    private Transform nozzel;
     private Material drawingMaterial;
     private GameObject currentDrawing;
 
@@ -40,7 +39,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private void Start()
     {
-        nozzel = transform.Find("SprayCan/Nozzel");
         context = NetworkScene.Register(this);
         var shader = Shader.Find("Particles/Standard Unlit");
         drawingMaterial = new Material(shader);
@@ -112,10 +110,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private void BeginDrawing()
     {
         Vector3 uvWorldPosition=Vector3.zero;	
-        Debug.Log("begin drawing outside");	
+        // Debug.Log("begin drawing outside");	
 		if(HitTestUVPosition(ref uvWorldPosition)){
 			// GameObject brushObj;
-            Debug.Log("begin drawing");
+            // Debug.Log("begin drawing");
             currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
 			brushColor.a=brushSize*2.0f; // Brushes have alpha to have a merging effect when painted over.
@@ -133,7 +131,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 		// Ray cursorRay=sceneCamera.ScreenPointToRay (cursorPos);
 		Ray cursorRay= new Ray(nozzel.GetComponent<Transform>().position, cursorDir);
 		if (Physics.Raycast(cursorRay,out hit,2000)){
-            Debug.Log("Inside hitTest");
+            // Debug.Log("Inside hitTest");
 			MeshCollider meshCollider = hit.collider as MeshCollider;
 			if (meshCollider == null || meshCollider.sharedMesh == null)
 				return false;			
@@ -151,7 +149,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private void EndDrawing()
     {
-        Debug.Log(currentDrawing);
+        // Debug.Log(currentDrawing);
         currentDrawing.transform.parent = null;
         // currentDrawing.GetComponent<TrailRenderer>().emitting = false;
         currentDrawing = null;

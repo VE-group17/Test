@@ -61,6 +61,7 @@ public class PickUp : MonoBehaviour, IGraspable
 
     void IGraspable.Grasp(Hand controller)
     {
+        Debug.Log("grasp");
         // 5. Define ownership as 'who holds the item currently'
         owner = true; // new
         this.controller = controller;
@@ -68,6 +69,7 @@ public class PickUp : MonoBehaviour, IGraspable
 
     void IGraspable.Release(Hand controller)
     {
+        print("release");
         // As 5. above, define ownership as 'who holds the item currently'
         owner = false; // new
         this.controller = null;
