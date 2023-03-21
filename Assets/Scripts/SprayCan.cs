@@ -42,6 +42,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         context = NetworkScene.Register(this);
         var shader = Shader.Find("Particles/Standard Unlit");
         drawingMaterial = new Material(shader);
+        brushColor = Color.blue;
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
@@ -51,7 +52,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         transform.rotation = data.rotation;
 
 
-        brushColor = Color.blue;
+        
 		if (Input.GetMouseButton(0)) {
 			BeginDrawing();
 		}
