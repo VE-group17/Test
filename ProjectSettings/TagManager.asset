@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Teleport
   - Ladder
+  - blueDrop
+  - greenDrop
+  - redDrop
+  - Bucket
   layers:
   - Default
   - TransparentFX
