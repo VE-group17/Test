@@ -4,7 +4,7 @@ using Ubiq.Messaging;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
-
+using System.Threading;
 // Adds simple networking to the 3d pen. The approach used is to draw locally
 // when a remote user tells us they are drawing, and stop drawing locally when
 // a remote user tells us they are not.
@@ -53,9 +53,9 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
 
         
-		if (Input.GetMouseButton(0)) {
-			BeginDrawing();
-		}
+		// if (Input.GetMouseButton(0)) {
+		// 	BeginDrawing();
+		// }
         // new
         // Also start drawing locally when a remote user starts
         if (data.isDrawing && !currentDrawing)
@@ -64,6 +64,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         }
         if (!data.isDrawing && currentDrawing)
         {
+            
             EndDrawing();
         }
     }
@@ -100,11 +101,21 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     void IUseable.Use(Hand controller)
     {
-        BeginDrawing();
+        StartCoroutine(waiter_drawing());
+    }
+    
+    IEnumerator waiter_drawing()
+    {
+        while (true)
+        {
+            BeginDrawing();
+            yield return new WaitForSeconds(0.001f);
+        }
     }
 
     void IUseable.UnUse(Hand controller)
     {
+        print("?????????????");
         EndDrawing();
     }
 
@@ -117,7 +128,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             // Debug.Log("begin drawing");
             currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
-			brushColor.a=brushSize*2.0f; // Brushes have alpha to have a merging effect when painted over.
+			brushColor.a=1.0f; // Brushes have alpha to have a merging effect when painted over.
 			currentDrawing.transform.parent=brushContainer.transform; //Add the brush to our container to be wiped later
 			currentDrawing.transform.localPosition=uvWorldPosition; //The position of the brush (in the UVMap)
             currentDrawing.transform.localScale=Vector3.one*brushSize;//The size of the brush
