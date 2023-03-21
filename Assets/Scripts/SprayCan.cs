@@ -15,11 +15,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private Hand controller;
     private Material drawingMaterial;
     private GameObject currentDrawing;
+    private bool painting;
 
     public Camera canvasCam, sceneCamera;
     public float brushSize=1.0f; //The size of our brush
     public Sprite cursorPaint;
     public GameObject brushContainer;
+
     Color brushColor;
     // public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
     // Amend message to also store current drawing state
@@ -101,12 +103,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     void IUseable.Use(Hand controller)
     {
+        painting = true;
         StartCoroutine(waiter_drawing());
     }
     
     IEnumerator waiter_drawing()
     {
-        while (true)
+        while (painting)
         {
             BeginDrawing();
             yield return new WaitForSeconds(0.001f);
@@ -165,5 +168,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         currentDrawing.transform.parent = null;
         // currentDrawing.GetComponent<TrailRenderer>().emitting = false;
         currentDrawing = null;
+        painting = false;
     }
 }
