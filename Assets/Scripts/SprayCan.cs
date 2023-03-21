@@ -124,12 +124,20 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private void BeginDrawing()
     {
+        brushColor = ColorSelector.GetColor ();
         Vector3 uvWorldPosition=Vector3.zero;	
         // Debug.Log("begin drawing outside");	
 		if(HitTestUVPosition(ref uvWorldPosition)){
 			// GameObject brushObj;
             // Debug.Log("begin drawing");
             currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
+            
+            float randomZ = Random.Range(0f, 360f);
+            // Create a Quaternion representing the random rotation around the z-axis
+            Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
+            // Apply the random rotation to the GameObject
+            currentDrawing.transform.rotation = randomRotation;
+
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
 			brushColor.a=1.0f; // Brushes have alpha to have a merging effect when painted over.
 			currentDrawing.transform.parent=brushContainer.transform; //Add the brush to our container to be wiped later
