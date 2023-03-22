@@ -4,7 +4,7 @@ using Ubiq.Messaging;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
-
+using System.Threading;
 // Adds simple networking to the 3d pen. The approach used is to draw locally
 // when a remote user tells us they are drawing, and stop drawing locally when
 // a remote user tells us they are not.
@@ -15,11 +15,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private Hand controller;
     private Material drawingMaterial;
     private GameObject currentDrawing;
+    private bool painting;
 
     public Camera canvasCam, sceneCamera;
     public float brushSize=1.0f; //The size of our brush
     public Sprite cursorPaint;
     public GameObject brushContainer;
+
     Color brushColor;
     // public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
     // Amend message to also store current drawing state
@@ -42,6 +44,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         context = NetworkScene.Register(this);
         var shader = Shader.Find("Particles/Standard Unlit");
         drawingMaterial = new Material(shader);
+        brushColor = Color.blue;
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
@@ -51,10 +54,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         transform.rotation = data.rotation;
 
 
-        brushColor = Color.blue;
-		if (Input.GetMouseButton(0)) {
-			BeginDrawing();
-		}
+        
+		// if (Input.GetMouseButton(0)) {
+		// 	BeginDrawing();
+		// }
         // new
         // Also start drawing locally when a remote user starts
         if (data.isDrawing && !currentDrawing)
@@ -63,6 +66,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         }
         if (!data.isDrawing && currentDrawing)
         {
+            
             EndDrawing();
         }
     }
@@ -99,24 +103,43 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     void IUseable.Use(Hand controller)
     {
-        BeginDrawing();
+        painting = true;
+        StartCoroutine(waiter_drawing());
+    }
+    
+    IEnumerator waiter_drawing()
+    {
+        while (painting)
+        {
+            BeginDrawing();
+            yield return new WaitForSeconds(0.001f);
+        }
     }
 
     void IUseable.UnUse(Hand controller)
     {
+        print("?????????????");
         EndDrawing();
     }
 
     private void BeginDrawing()
     {
+        brushColor = ColorSelector.GetColor ();
         Vector3 uvWorldPosition=Vector3.zero;	
         // Debug.Log("begin drawing outside");	
 		if(HitTestUVPosition(ref uvWorldPosition)){
 			// GameObject brushObj;
             // Debug.Log("begin drawing");
             currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
+            
+            float randomZ = Random.Range(0f, 360f);
+            // Create a Quaternion representing the random rotation around the z-axis
+            Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
+            // Apply the random rotation to the GameObject
+            currentDrawing.transform.rotation = randomRotation;
+
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
-			brushColor.a=brushSize*2.0f; // Brushes have alpha to have a merging effect when painted over.
+			brushColor.a=1.0f; // Brushes have alpha to have a merging effect when painted over.
 			currentDrawing.transform.parent=brushContainer.transform; //Add the brush to our container to be wiped later
 			currentDrawing.transform.localPosition=uvWorldPosition; //The position of the brush (in the UVMap)
             currentDrawing.transform.localScale=Vector3.one*brushSize;//The size of the brush
@@ -153,5 +176,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         currentDrawing.transform.parent = null;
         // currentDrawing.GetComponent<TrailRenderer>().emitting = false;
         currentDrawing = null;
+        painting = false;
     }
 }
