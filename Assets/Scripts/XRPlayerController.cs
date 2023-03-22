@@ -122,6 +122,47 @@ namespace Ubiq.XR
             transform.position += velocity * Time.deltaTime;
         }
 
+        private void xrmove()
+        {
+            foreach (var item in handControllers)
+            {
+                if (item.Right)
+                {
+                    if (item.JoystickSwipe.Trigger)
+                    {
+                        transform.RotateAround(headCamera.transform.position, Vector3.up, 45f * Mathf.Sign(item.JoystickSwipe.Value));
+                    }
+                }
+                else if (item.Left)
+                {
+                    var dir = item.Joystick.normalized;
+                    var mag = item.Joystick.magnitude;
+                    if (mag > joystickDeadzone)
+                    {
+                        var speedMultiplier = Mathf.InverseLerp(joystickDeadzone, 1.0f, mag);
+                        var worldDir = headCamera.transform.TransformDirection(dir.x, 0, dir.y);
+                        worldDir.y = 0;
+                        var distance = (joystickFlySpeed * Time.deltaTime);
+                        transform.position += distance * worldDir.normalized;
+                    }
+                }
+            }
+
+            var headProjectionXZ = transform.InverseTransformPoint(headCamera.transform.position);
+            headProjectionXZ.y = 0;
+            userLocalPosition.x += (headProjectionXZ.x - userLocalPosition.x) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.x - userLocalPosition.x));
+            userLocalPosition.z += (headProjectionXZ.z - userLocalPosition.z) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.z - userLocalPosition.z));
+            userLocalPosition.y = 0;
+            ///
+            if (transform.position.y > 0.1f)
+            {
+                transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
+            }
+            else
+            {
+                transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
+            }
+        }
 
         private void Update()
         {
@@ -129,69 +170,56 @@ namespace Ubiq.XR
             // Decoupling the feet in this way allows the user to do things like lean over edges, when the ground check is enabled.
             // This can be effectively disabled by setting the animation curve to a constant high value.
             if(inside == true)
-            {   
-                foreach (var item in handControllers)
+            {
+                if (Input.GetKeyDown(KeyCode.JoystickButton1))
                 {
-                    if (item.Left)
+                    if (transform.position.y - 0.1f < 0.2f)
                     {
-                        var dir = item.Joystick.normalized;
-                        var mag = item.Joystick.magnitude;
-                        if (mag > joystickDeadzone)
+                        xrmove();
+                    }
+                    if (transform.position.y > 0.1f)
+                    {
+                        transform.position += Vector3.down * (transform.position.y - 0.1f) * 5.0f * Time.deltaTime;
+
+                        //transform.position += Vector3.down * 0.2f * Time.deltaTime;
+                    }
+                    else
+                    {
+                        transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
+                    }
+                } else
+                {
+                    foreach (var item in handControllers)
+                    {
+                        if (item.Left)
                         {
-                            var speedMultiplier = Mathf.InverseLerp(joystickDeadzone,1.0f,mag);
-                            var worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
-                            if (dir.y >= 0) {
-                                worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
-                            } else {
-                                worldDir = headCamera.transform.TransformDirection(0,dir.y,0);
+                            var dir = item.Joystick.normalized;
+                            var mag = item.Joystick.magnitude;
+                            if (mag > joystickDeadzone)
+                            {
+                                var speedMultiplier = Mathf.InverseLerp(joystickDeadzone, 1.0f, mag);
+                                var worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
+                                if (dir.y >= 0)
+                                {
+                                    worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
+                                }
+                                else
+                                {
+                                    worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
+                                }
+                                // var worldDir = headCamera.transform.TransformDirection(dir.x,0,dir.y);
+                                worldDir.z = 0;
+                                worldDir.x = 0;
+                                var distance = (joystickFlySpeed * Time.deltaTime);
+                                transform.position += distance * worldDir.normalized;
                             }
-                            // var worldDir = headCamera.transform.TransformDirection(dir.x,0,dir.y);
-                            worldDir.z = 0;
-                            worldDir.x = 0;
-                            var distance = (joystickFlySpeed * Time.deltaTime);
-                            transform.position += distance * worldDir.normalized;
                         }
                     }
                 }
+                
             } 
             else {
-                foreach (var item in handControllers)
-                {
-                    if (item.Right)
-                    {
-                        if (item.JoystickSwipe.Trigger)
-                        {
-                            transform.RotateAround(headCamera.transform.position, Vector3.up, 45f * Mathf.Sign(item.JoystickSwipe.Value));
-                        }
-                    }
-                    else if (item.Left)
-                    {
-                        var dir = item.Joystick.normalized;
-                        var mag = item.Joystick.magnitude;
-                        if (mag > joystickDeadzone)
-                        {
-                            var speedMultiplier = Mathf.InverseLerp(joystickDeadzone,1.0f,mag);
-                            var worldDir = headCamera.transform.TransformDirection(dir.x,0,dir.y);
-                            worldDir.y = 0;
-                            var distance = (joystickFlySpeed * Time.deltaTime);
-                            transform.position += distance * worldDir.normalized;
-                        }
-                    }
-                }
-
-                var headProjectionXZ = transform.InverseTransformPoint(headCamera.transform.position);
-                headProjectionXZ.y = 0;
-                userLocalPosition.x += (headProjectionXZ.x - userLocalPosition.x) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.x - userLocalPosition.x));
-                userLocalPosition.z += (headProjectionXZ.z - userLocalPosition.z) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.z - userLocalPosition.z));
-                userLocalPosition.y = 0;
-                ///
-                if (transform.position.y > 0.1f) {
-                    transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
-                } 
-                else 
-                {
-                    transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
-                }
+                xrmove();
                 ///
             }
         }

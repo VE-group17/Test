@@ -39,27 +39,9 @@ public class Move_ladder : MonoBehaviour
 
             if (Input.GetKey(KeyCode.J))
             {
-                Vector3 movement = new Vector3(0f, 0f, 0f);
-                if (Input.GetKey(KeyCode.A))
-                {
-                    movement += new Vector3(-1f, 0f, 0f);
-                }
-                if (Input.GetKey(KeyCode.D))
-                {
-                    movement += new Vector3(1f, 0f, 0f);
-                }
-                if (Input.GetKey(KeyCode.W))
-                {
-                    movement += new Vector3(0f, 0f, 1f);
-                }
-                if (Input.GetKey(KeyCode.S))
-                {
-                    movement += new Vector3(0f, 0f, -1f);
-                }
-                movement = movement.normalized * (movementSpeed) * Time.deltaTime;
-                movement.y = 0f;
-                transform.position += movement;
-
+                Vector3 movement = PlayerTransform.position;
+                movement.y = 0;
+                transform.position = movement;
             }
         }
     }

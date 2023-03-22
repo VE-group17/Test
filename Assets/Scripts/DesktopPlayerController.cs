@@ -159,6 +159,23 @@ namespace Ubiq.XR
             userLocalPosition.y = 0;
         }
 
+        private void destmove()
+        {
+            OnMouse();
+            OnKeys();
+            ///
+            if (transform.position.y > 0.1f)
+            {
+                transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
+
+                //transform.position += Vector3.down * 0.2f * Time.deltaTime;
+            }
+            else
+            {
+                transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
+            }
+        }
+
         private void Update()
         {
             // Desktop only
@@ -170,31 +187,46 @@ namespace Ubiq.XR
             }
             ///
             if(inside == true)
-            {   
-                Vector3 movement = new Vector3(0f, 0f, 0f);
-                if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+            {
+                if (Input.GetKey(KeyCode.J))
                 {
-                    movement += new Vector3(0f, 1f, 0f);
+                    if(transform.position.y - 0.1f < 0.2f)
+                    {
+                        destmove();
+                    }
+                    if (transform.position.y > 0.1f)
+                    {
+                        transform.position += Vector3.down * (transform.position.y - 0.1f) * 5.0f * Time.deltaTime;
+
+                        //transform.position += Vector3.down * 0.2f * Time.deltaTime;
+                    }
+                    else
+                    {
+                        transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
+                    }
+
                 }
-                if (Input.GetKey(KeyCode.DownArrow)|| Input.GetKey(KeyCode.S))
+                else
                 {
-                    movement += new Vector3(0f, -1f, 0f);
+                    Vector3 movement = new Vector3(0f, 0f, 0f);
+                    if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+                    {
+                        movement += new Vector3(0f, 1f, 0f);
+                    }
+                    if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+                    {
+                        movement += new Vector3(0f, -1f, 0f);
+                    }
+                    movement = movement.normalized * (movementSpeed) * Time.deltaTime;
+                    movement = headCamera.transform.TransformDirection(movement);
+                    transform.position += movement;
                 }
-                movement = movement.normalized * (movementSpeed) * Time.deltaTime;
-                movement = headCamera.transform.TransformDirection(movement);
-                transform.position += movement;
             } 
             
             else 
             {///
-                OnMouse();
-                OnKeys();
-                ///
-                if (transform.position.y > 0.1f) {
-                    transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
-                } else {
-                    transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
-                }
+                destmove();
+
             }
             ///
             
