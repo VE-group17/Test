@@ -144,6 +144,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     {
         while (painting)
         {
+            //background = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/UCL")); //Paint a brush
+            //background.transform.parent = brushContainer.transform;
+            //background.transform.localPosition = new Vector3(-canvasCam.orthographicSize, -canvasCam.orthographicSize, 0.0f);
+            //background.transform.localScale = Vector3.one * 0.1f;
             BeginDrawing();
             yield return new WaitForSeconds(0.001f);
         }
@@ -166,8 +170,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 			// GameObject brushObj;
             // Debug.Log("begin drawing");
             currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
-            background = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/UCL")); //Paint a brush
-
+            
             float randomZ = Random.Range(0f, 360f);
             // Create a Quaternion representing the random rotation around the z-axis
             // Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
@@ -177,9 +180,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             float brushSize = 0.001f * Vector3.Distance(hitPoint, nozzle.GetComponent<Transform>().position);
 
 
-            background.transform.parent = brushContainer.transform;
-            background.transform.localPosition = new Vector3(-canvasCam.orthographicSize, -canvasCam.orthographicSize, 0.0f);
-            background.transform.localScale = Vector3.one * 0.1f;
+            
              
 
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
