@@ -18,7 +18,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private bool painting;
 
     public Camera canvasCam, sceneCamera;
-    public float brushSize=1.0f; //The size of our brush
     public Sprite cursorPaint;
     public GameObject brushContainer;
 
@@ -93,12 +92,14 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     {
         owner = true;
         this.controller = controller;
+        GetComponent<Rigidbody>().useGravity = false;
     }
 
     void IGraspable.Release(Hand controller)
     {
         owner = false;
         this.controller = null;
+        GetComponent<Rigidbody>().useGravity = true;
     }
 
     void IUseable.Use(Hand controller)
@@ -125,9 +126,11 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private void BeginDrawing()
     {
         brushColor = ColorSelector.GetColor ();
-        Vector3 uvWorldPosition=Vector3.zero;	
+        Vector3 uvWorldPosition = Vector3.zero;	
+        Vector3 hitPoint = Vector3.zero;	
+        
         // Debug.Log("begin drawing outside");	
-		if(HitTestUVPosition(ref uvWorldPosition)){
+		if(HitTestUVPosition(ref uvWorldPosition, ref hitPoint)){
 			// GameObject brushObj;
             // Debug.Log("begin drawing");
             currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
@@ -137,6 +140,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
             // Apply the random rotation to the GameObject
             currentDrawing.transform.rotation = randomRotation;
+            GameObject nozzle = GameObject.Find("Cylinder");
+            float brushSize = 0.001f * Vector3.Distance(hitPoint, nozzle.GetComponent<Transform>().position);
 
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
 			brushColor.a=1.0f; // Brushes have alpha to have a merging effect when painted over.
@@ -147,13 +152,14 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     }
     
     //Returns the position on the texuremap according to a hit in the mesh collider
-    bool HitTestUVPosition(ref Vector3 uvWorldPosition){
+    bool HitTestUVPosition(ref Vector3 uvWorldPosition, ref Vector3 hitPoint){
 		RaycastHit hit;
-        GameObject nozzel = GameObject.Find("Cylinder");
-		Vector3 cursorDir = nozzel.transform.forward;
+        GameObject nozzle = GameObject.Find("Cylinder");
+		Vector3 cursorDir = nozzle.transform.forward;
 		// Ray cursorRay=sceneCamera.ScreenPointToRay (cursorPos);
-		Ray cursorRay= new Ray(nozzel.GetComponent<Transform>().position, cursorDir);
-		if (Physics.Raycast(cursorRay,out hit,2000)){
+		Ray cursorRay= new Ray(nozzle.GetComponent<Transform>().position, cursorDir);
+		if (Physics.Raycast(cursorRay,out hit,3)){
+            hitPoint = hit.point;
             // Debug.Log("Inside hitTest");
 			MeshCollider meshCollider = hit.collider as MeshCollider;
 			if (meshCollider == null || meshCollider.sharedMesh == null)
