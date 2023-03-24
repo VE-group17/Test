@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine.UIElements;
 // Adds simple networking to the 3d pen. The approach used is to draw locally
 // when a remote user tells us they are drawing, and stop drawing locally when
 // a remote user tells us they are not.
@@ -15,6 +16,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private Hand controller;
     private Material drawingMaterial;
     private GameObject currentDrawing;
+    private GameObject background;
     private bool painting;
 
     public Camera canvasCam, sceneCamera;
@@ -164,7 +166,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 			// GameObject brushObj;
             // Debug.Log("begin drawing");
             currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
-            
+            background = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/UCL")); //Paint a brush
+
             float randomZ = Random.Range(0f, 360f);
             // Create a Quaternion representing the random rotation around the z-axis
             // Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
@@ -172,6 +175,12 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             // currentDrawing.GetComponent<RectTransform>().transform.Rotate(0f, 0f,randomZ);
             GameObject nozzle = GameObject.Find("Cylinder");
             float brushSize = 0.001f * Vector3.Distance(hitPoint, nozzle.GetComponent<Transform>().position);
+
+
+            background.transform.parent = brushContainer.transform;
+            background.transform.localPosition = new Vector3(-canvasCam.orthographicSize, -canvasCam.orthographicSize, 0.0f);
+            background.transform.localScale = Vector3.one * 0.1f;
+             
 
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
 			brushColor.a=1.0f; // Brushes have alpha to have a merging effect when painted over.
@@ -195,6 +204,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 			if (meshCollider == null || meshCollider.sharedMesh == null)
 				return false;			
 			Vector2 pixelUV  = new Vector2(hit.textureCoord.x,hit.textureCoord.y);
+            print(pixelUV);
 			uvWorldPosition.x=pixelUV.x-canvasCam.orthographicSize;//To center the UV on X
 			uvWorldPosition.y=pixelUV.y-canvasCam.orthographicSize;//To center the UV on Y
 			uvWorldPosition.z=0.0f;
@@ -212,6 +222,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         currentDrawing.transform.parent = null;
         // currentDrawing.GetComponent<TrailRenderer>().emitting = false;
         currentDrawing = null;
+
         painting = false;
     }
 }

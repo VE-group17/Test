@@ -5,6 +5,7 @@ using Ubiq.XR;
 using Ubiq.Messaging; // new
 public class BrushClass : MonoBehaviour
 {
+    public Sprite sp1, sp2, spnone;
     private NetworkContext context; // new
     private bool owner; // new
     private Hand controller;
@@ -35,6 +36,17 @@ public class BrushClass : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKey(KeyCode.U))
+        {
+            GetComponent<SpriteRenderer>().sprite = sp1;
+        }
+        if (Input.GetKey(KeyCode.I))
+        {
+            GetComponent<SpriteRenderer>().sprite = sp2;
+        }
+        if (Input.GetKey(KeyCode.P))
+        {
+            GetComponent<SpriteRenderer>().sprite = spnone;
+        }
     }
 }
