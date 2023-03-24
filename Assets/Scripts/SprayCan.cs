@@ -23,6 +23,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private Collider my_collider;
 
+    public GameObject AvatarManager;
+    public string myID;
+    public string ownerID;
+
     Color brushColor;
     // public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
     // Amend message to also store current drawing state
@@ -31,12 +35,14 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         public Vector3 position;
         public Quaternion rotation;
         public bool isDrawing; // new
+        public string ownerID;
         
-        public Message(Transform transform, bool isDrawing)
+        public Message(Transform transform, bool isDrawing, string ownerID)
         {
             this.position = transform.position;
             this.rotation = transform.rotation;
             this.isDrawing = isDrawing; // new
+            this.ownerID = ownerID;
         }
     }
 
@@ -48,6 +54,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         brushColor = Color.blue;
 
         my_collider = GetComponent<Collider>();
+        myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
+        print("My ID: "+myID);
         
     }
 
@@ -57,7 +65,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         transform.position = data.position;
         transform.rotation = data.rotation;
 
-
+        ownerID = data.ownerID;
+        print("----------Owner ID: "+data.ownerID);
         
 		// if (Input.GetMouseButton(0)) {
 		// 	BeginDrawing();
@@ -80,11 +89,14 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         if (owner)
         {
             // new
-            context.SendJson(new Message(transform,isDrawing:currentDrawing));
+            context.SendJson(new Message(transform,isDrawing:currentDrawing,myID));
             
             my_collider.isTrigger = true;
         }
-        else{my_collider.isTrigger = false;}
+        else
+        {
+            my_collider.isTrigger = false;
+        }
     }
 
     private void LateUpdate()
@@ -94,20 +106,36 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             transform.position = controller.transform.position;
             transform.rotation = controller.transform.rotation;
         }
+        print("----------Owner ID: "+ownerID);
+        print("----------my ID: "+myID);
+        if(owner & (myID != ownerID))
+        {
+            Release();
+            print("Released! ");
+        }
     }
 
     void IGraspable.Grasp(Hand controller)
     {
         owner = true;
         this.controller = controller;
+
+        ownerID = myID;
         GetComponent<Rigidbody>().useGravity = false;
     }
 
     void IGraspable.Release(Hand controller)
     {
         owner = false;
+        ownerID = "";
         this.controller = null;
         GetComponent<Rigidbody>().useGravity = true;
+    }
+
+    void Release() //被动release，因为别人拿走了
+    {
+        owner = false; // new
+        this.controller = null;
     }
 
     void IUseable.Use(Hand controller)

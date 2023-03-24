@@ -79744,7 +79744,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7038207173201101541}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.55
   m_Height: 2.9
@@ -79782,6 +79782,9 @@ MonoBehaviour:
   sceneCamera: {fileID: 1206544755303185489}
   cursorPaint: {fileID: 21300000, guid: 2ad8e55b008da9a4f9203826e67bc99c, type: 3}
   brushContainer: {fileID: 4205170221602351179}
+  AvatarManager: {fileID: 927339328}
+  myID: 
+  ownerID: 
 --- !u!1 &7703421169485746833
 GameObject:
   m_ObjectHideFlags: 0
