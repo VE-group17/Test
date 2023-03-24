@@ -55,8 +55,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
         my_collider = GetComponent<Collider>();
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
-        print("My ID: "+myID);
-        
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
@@ -66,8 +64,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         transform.rotation = data.rotation;
 
         ownerID = data.ownerID;
-        print("----------Owner ID: "+data.ownerID);
-        
 		// if (Input.GetMouseButton(0)) {
 		// 	BeginDrawing();
 		// }
@@ -106,8 +102,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             transform.position = controller.transform.position;
             transform.rotation = controller.transform.rotation;
         }
-        print("----------Owner ID: "+ownerID);
-        print("----------my ID: "+myID);
         if(owner & (myID != ownerID))
         {
             Release();
