@@ -106,8 +106,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             transform.position = controller.transform.position;
             transform.rotation = controller.transform.rotation;
         }
-        print("----------Owner ID: "+ownerID);
-        print("----------my ID: "+myID);
+       // print("----------Owner ID: "+ownerID);
+       // print("----------my ID: "+myID);
         if(owner & (myID != ownerID))
         {
             Release();
