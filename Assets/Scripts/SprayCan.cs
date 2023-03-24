@@ -21,6 +21,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     public Sprite cursorPaint;
     public GameObject brushContainer;
 
+    private Collider my_collider;
+
     Color brushColor;
     // public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
     // Amend message to also store current drawing state
@@ -44,6 +46,9 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         var shader = Shader.Find("Particles/Standard Unlit");
         drawingMaterial = new Material(shader);
         brushColor = Color.blue;
+
+        my_collider = GetComponent<Collider>();
+        
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
@@ -76,7 +81,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         {
             // new
             context.SendJson(new Message(transform,isDrawing:currentDrawing));
+            
+            my_collider.isTrigger = true;
         }
+        else{my_collider.isTrigger = false;}
     }
 
     private void LateUpdate()
