@@ -137,9 +137,9 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             
             float randomZ = Random.Range(0f, 360f);
             // Create a Quaternion representing the random rotation around the z-axis
-            Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
+            // Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
             // Apply the random rotation to the GameObject
-            currentDrawing.transform.rotation = randomRotation;
+            // currentDrawing.GetComponent<RectTransform>().transform.Rotate(0f, 0f,randomZ);
             GameObject nozzle = GameObject.Find("Cylinder");
             float brushSize = 0.001f * Vector3.Distance(hitPoint, nozzle.GetComponent<Transform>().position);
 
