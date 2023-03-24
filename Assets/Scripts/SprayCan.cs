@@ -139,15 +139,11 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         painting = true;
         StartCoroutine(waiter_drawing());
     }
-    
+
     IEnumerator waiter_drawing()
     {
         while (painting)
         {
-            //background = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/UCL")); //Paint a brush
-            //background.transform.parent = brushContainer.transform;
-            //background.transform.localPosition = new Vector3(-canvasCam.orthographicSize, -canvasCam.orthographicSize, 0.0f);
-            //background.transform.localScale = Vector3.one * 0.1f;
             BeginDrawing();
             yield return new WaitForSeconds(0.001f);
         }
@@ -179,9 +175,12 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             GameObject nozzle = GameObject.Find("Cylinder");
             float brushSize = 0.001f * Vector3.Distance(hitPoint, nozzle.GetComponent<Transform>().position);
 
+            //background = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/UCL"));
+            //background.transform.parent = brushContainer.transform;
+            //background.transform.localPosition = new Vector3(-canvasCam.orthographicSize, -canvasCam.orthographicSize, 0.0f);
+            //background.transform.localScale = Vector3.one * 0.05f;
 
-            
-             
+
 
             currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
 			brushColor.a=1.0f; // Brushes have alpha to have a merging effect when painted over.

@@ -188,39 +188,24 @@ namespace Ubiq.XR
             ///
             if(inside == true)
             {
-                if (Input.GetKey(KeyCode.J))
-                {
-                    if(transform.position.y - 0.1f < 0.2f)
-                    {
-                        destmove();
-                    }
-                    if (transform.position.y > 0.1f)
-                    {
-                        transform.position += Vector3.down * (transform.position.y - 0.1f) * 5.0f * Time.deltaTime;
+                //GameObject ladder_ = GameObject.Find("StellLadderB");
+                //Vector3 ladder_position = ladder_.transform.position;
+                //ladder_position.y = transform.position.y;
+                //transform.position = ladder_position + first_offset;
 
-                        //transform.position += Vector3.down * 0.2f * Time.deltaTime;
-                    }
-                    else
-                    {
-                        transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
-                    }
-
-                }
-                else
+                Vector3 movement = new Vector3(0f, 0f, 0f);
+                if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
                 {
-                    Vector3 movement = new Vector3(0f, 0f, 0f);
-                    if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
-                    {
-                        movement += new Vector3(0f, 1f, 0f);
-                    }
-                    if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-                    {
-                        movement += new Vector3(0f, -1f, 0f);
-                    }
-                    movement = movement.normalized * (movementSpeed) * Time.deltaTime;
-                    movement = headCamera.transform.TransformDirection(movement);
-                    transform.position += movement;
+                    movement += new Vector3(0f, 1f, 0f);
                 }
+                if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+                {
+                    movement += new Vector3(0f, -1f, 0f);
+                }
+                movement = movement.normalized * (movementSpeed) * Time.deltaTime;
+                movement = headCamera.transform.TransformDirection(movement);
+                transform.position += movement;
+                
             } 
             
             else 
