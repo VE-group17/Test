@@ -8,7 +8,7 @@ public class roller : MonoBehaviour, IGraspable, IUseable
 {
     [SerializeField] private Transform _tip;
     [SerializeField] private int _penSize = 35;
-
+    public float mix_coef = 0.4f;
     private Renderer _renderer;
     private Color[] _colors;
     private float _tipHeight;
@@ -17,6 +17,8 @@ public class roller : MonoBehaviour, IGraspable, IUseable
     private Vector2 _touchPos, _lastTouchPos;
     private bool _touchLastFrame;
     private Quaternion _lastTouchRot;
+    private Color wall_color;
+    private GameObject _wall;
 
     // Start is called before the first frame update
    // private Collider my_collider;
@@ -26,6 +28,9 @@ public class roller : MonoBehaviour, IGraspable, IUseable
         _renderer = _tip.GetComponent<Renderer>();
         _colors = Enumerable.Repeat(_renderer.material.color, _penSize * _penSize).ToArray();
         _tipHeight = 0.1f;
+        _wall = GameObject.FindGameObjectWithTag("Whiteboard");
+        wall_color = _wall.GetComponent<Renderer>().material.color;
+        
        // my_collider = GetComponent<Collider>();
 
     }
@@ -67,9 +72,12 @@ public class roller : MonoBehaviour, IGraspable, IUseable
 
                 Color paint_color = _touch.transform.GetComponent<Renderer>().material.color;
                 //if (paint_color == Color.black) paint_color = Color.white;
-               // paint_color[3] = 0.4f;
+                // paint_color[3] = 0.4f;
+                
+              //  print(wall_color);
                 Transform brush = transform.GetChild(5).GetChild(0).GetComponent<Transform>();
                 brush.GetComponent<Renderer>().material.color = paint_color;
+                paint_color = (1f - mix_coef) * wall_color + mix_coef * paint_color;
                 _colors = Enumerable.Repeat(paint_color, _penSize * _penSize).ToArray();
                 // print(brush.name);
                 // transform.GetComponent<Material>().color = paint_color;
@@ -84,6 +92,8 @@ public class roller : MonoBehaviour, IGraspable, IUseable
                 if (_whiteboard == null)
                 {
                     _whiteboard = _touch.transform.GetComponent<Whiteboard>();
+                    wall_color = _whiteboard.transform.GetComponent<Renderer>().material.color;
+                   // print(wall_color);
                 }
                 _touchPos = new Vector2(_touch.textureCoord.x, _touch.textureCoord.y);
 
