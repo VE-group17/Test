@@ -17,6 +17,7 @@ public class roller : MonoBehaviour, IGraspable, IUseable
     private Vector2 _touchPos, _lastTouchPos;
     private bool _touchLastFrame;
     private Quaternion _lastTouchRot;
+
     // Start is called before the first frame update
    // private Collider my_collider;
 
@@ -65,6 +66,8 @@ public class roller : MonoBehaviour, IGraspable, IUseable
                
 
                 Color paint_color = _touch.transform.GetComponent<Renderer>().material.color;
+                //if (paint_color == Color.black) paint_color = Color.white;
+               // paint_color[3] = 0.4f;
                 Transform brush = transform.GetChild(5).GetChild(0).GetComponent<Transform>();
                 brush.GetComponent<Renderer>().material.color = paint_color;
                 _colors = Enumerable.Repeat(paint_color, _penSize * _penSize).ToArray();
