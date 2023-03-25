@@ -2,9 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using static System.TimeZoneInfo;
+using Ubiq.Messaging;
 
 public class Combine : MonoBehaviour
 {
+    private NetworkContext context;
+
     private float Blue_num_particles;
     private float Green_num_particles;
     private float Red_num_particles;
@@ -13,8 +16,21 @@ public class Combine : MonoBehaviour
     private Color myColor;
     private float threshold;
     private float timespeed;
+    private bool is_mixing;
+
+    private struct Message
+    {
+        public Color color;
+        public Message(Color color)
+        {
+            this.color = color;
+        }
+    }
+
     void Start()
     {
+        context = NetworkScene.Register(this);
+
         myrenderer = GetComponent<Renderer>();  
         myColor = myrenderer.material.color;
         threshold = 200;
@@ -22,9 +38,24 @@ public class Combine : MonoBehaviour
    
     }
 
+    public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
+    {
+        var data = msg.FromJson<Message>();
+        myColor = data.color;
+    }
+
+    private void LateUpdate()
+    {
+        if(is_mixing)
+        {
+            context.SendJson(new Message(myColor));
+        }
+    }
+    
     void OnParticleCollision(GameObject other)
     {
-       
+        is_mixing = true;
+
         total_num++;
         if (myColor[3] < 1f)
         {
@@ -75,6 +106,12 @@ public class Combine : MonoBehaviour
         //    }
         //    i++;
         //}
+    }
+
+    void OnParticleCollisionExit(GameObject other)
+    {
+        is_mixing = false;
+        Debug.Log("OnParticleCollisionExit");
     }
 
     void Transparent2Opaque(Color color)
