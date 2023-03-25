@@ -6,6 +6,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine.UIElements;
+using System.Text.RegularExpressions;
+
 // Adds simple networking to the 3d pen. The approach used is to draw locally
 // when a remote user tells us they are drawing, and stop drawing locally when
 // a remote user tells us they are not.
@@ -19,7 +21,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private GameObject background;
     private bool painting;
     private List<(float, float, float, float, float, float, float, float)> brushList = new List<(float, float, float, float, float, float, float, float)>();
-
     public Camera canvasCam, sceneCamera;
     public Sprite cursorPaint;
     public GameObject brushContainer;
@@ -39,14 +40,14 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         public Quaternion rotation;
         public bool isDrawing; // new
         public string ownerID;
-        public List<(float, float, float, float, float, float, float, float)> brushList;
-        public Message(Transform transform, bool isDrawing, string ownerID, List<(float, float, float, float, float, float, float, float)> brushList)
+        public string brushString;
+        public Message(Transform transform, bool isDrawing, string ownerID, string brushString)
         {
             this.position = transform.position;
             this.rotation = transform.rotation;
             this.isDrawing = isDrawing; // new
             this.ownerID = ownerID;
-            this.brushList = brushList;
+            this.brushString = brushString;
         }
     }
 
@@ -66,7 +67,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         var data = msg.FromJson<Message>();
         transform.position = data.position;
         transform.rotation = data.rotation;
-        var remoteBrushList = data.brushList;
+        var remoteBrushString = data.brushString;
         ownerID = data.ownerID;
 		// if (Input.GetMouseButton(0)) {
 		// 	BeginDrawing();
@@ -75,11 +76,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         // Also start drawing locally when a remote user starts
         if (data.isDrawing && !currentDrawing)
         {
-            createBrushFromList(remoteBrushList);
+            createBrushFromList(remoteBrushString);
         }
         if (!data.isDrawing && currentDrawing)
         {
-            
             EndDrawing();
         }
     }
@@ -89,8 +89,12 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         if (owner)
         {
             // new
-            context.SendJson(new Message(transform,isDrawing:currentDrawing,myID,brushList));
-            
+            // float[][] brushArray = brushList.ToArray();
+            string brushString = string.Join("|", this.brushList.ConvertAll(tuple => string.Join(",", tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4, tuple.Item5, tuple.Item6, tuple.Item7, tuple.Item8)));
+            // Debug.Log(brushString);
+            context.SendJson(new Message(transform,isDrawing:currentDrawing,myID,brushString));
+            currentDrawing = null;
+            this.brushList = new List<(float, float, float, float, float, float, float, float)>();
             my_collider.isTrigger = true;
         }
         else
@@ -98,6 +102,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             my_collider.isTrigger = false;
         }
     }
+
 
     private void LateUpdate()
     {
@@ -109,7 +114,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         if(owner & (myID != ownerID))
         {
             Release();
-            print("Released! ");
+            // Debug.Log("Released! ");
         }
     }
 
@@ -161,29 +166,32 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         float y = brush.transform.localPosition[1];
         float z = brush.transform.localPosition[2];
         float brushSize = brush.transform.localScale[0];
-        print((r,g,b,a,x,y,z,brushSize));
+        // Debug.Log((r,g,b,a,x,y,z,brushSize));
         this.brushList.Add((r,g,b,a,x,y,z,brushSize));
     }
 
-    void createBrushFromList(List<(float, float, float, float, float, float, float, float)> input)
-    {
-        for (int i = 0; i < input.Count; i++)
+    void createBrushFromList(string input)
+    {   
+        // Debug.Log("im in createbrushfromlist");
+
+        string[] sections = input.Split('|');
+        foreach (string section in sections)
         {
-            Vector3 uvWorldPosition = new Vector3(input[i].Item5,input[i].Item6,input[i].Item7);
-            Color color = new Color(input[i].Item1,input[i].Item2,input[i].Item3,input[i].Item4);
-            float brushSize = input[i].Item8;
+            string[] numbers = section.Split(',');
+            Vector3 uvWorldPosition = new Vector3(float.Parse(numbers[4]),float.Parse(numbers[5]),float.Parse(numbers[6]));
+            Color color = new Color(float.Parse(numbers[0]),float.Parse(numbers[1]),float.Parse(numbers[2]),float.Parse(numbers[3]));
+            float brushSize = float.Parse(numbers[7]);
 
             GameObject tempDrawing = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity"));
             tempDrawing.GetComponent<SpriteRenderer>().color=color;
             tempDrawing.transform.parent=brushContainer.transform; //Add the brush to our container to be wiped later
-			tempDrawing.transform.localPosition=uvWorldPosition; //The position of the brush (in the UVMap)
+            tempDrawing.transform.localPosition=uvWorldPosition; //The position of the brush (in the UVMap)
             tempDrawing.transform.localScale=Vector3.one*brushSize;//The size of the brush
         }
     }
 
     void IUseable.UnUse(Hand controller)
     {
-        print("?????????????");
         EndDrawing();
     }
 
@@ -238,7 +246,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 			if (meshCollider == null || meshCollider.sharedMesh == null)
 				return false;			
 			Vector2 pixelUV  = new Vector2(hit.textureCoord.x,hit.textureCoord.y);
-            print(pixelUV);
+            // Debug.Log(pixelUV);
 			uvWorldPosition.x=pixelUV.x-canvasCam.orthographicSize;//To center the UV on X
 			uvWorldPosition.y=pixelUV.y-canvasCam.orthographicSize;//To center the UV on Y
 			uvWorldPosition.z=0.0f;
@@ -253,10 +261,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private void EndDrawing()
     {
         // Debug.Log(currentDrawing);
-        currentDrawing.transform.parent = null;
+        // currentDrawing.transform.parent = null;
         // currentDrawing.GetComponent<TrailRenderer>().emitting = false;
-        currentDrawing = null;
-        this.brushList = new List<(float, float, float, float, float, float, float, float)>();
+        // currentDrawing = null;
+        // this.brushList = new List<(float, float, float, float, float, float, float, float)>();
         painting = false;
     }
 }
