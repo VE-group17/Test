@@ -105,6 +105,7 @@ public class roller : MonoBehaviour, IGraspable, IUseable
 
                 if (_touchLastFrame)
                 {
+                    //print(_whiteboard.texture);
                     _whiteboard.texture.SetPixels(x, y, _penSize, _penSize, _colors);
                     for (float f = 0.01f; f < 1.00f; f += 0.03f)
                     {
