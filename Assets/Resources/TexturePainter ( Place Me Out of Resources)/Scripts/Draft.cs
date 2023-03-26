@@ -230,8 +230,8 @@ public class Draft : MonoBehaviour
     {
         Texture2D denoise_Texture = Gaussian_denoise(originalTexture);
         double[,] intensity_gradients = Sobel_filter_nonmax(denoise_Texture);
-        double highThreshold = 0.4;
-        double lowThreshold = 0.14;
+        double highThreshold = 0.15;
+        double lowThreshold = 0.05;
         Texture2D modifiedTexture = new Texture2D(denoise_Texture.width, denoise_Texture.height);
 
         int[,] offsets = new int[,]
