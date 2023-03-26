@@ -44,7 +44,7 @@ public class BrushClass : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().sprite = sp2;
         }
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.O))
         {
             GetComponent<SpriteRenderer>().sprite = spnone;
         }
