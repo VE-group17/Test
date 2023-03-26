@@ -21,7 +21,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private GameObject background;
     private bool painting;
     private List<(float, float, float, float, float, float, float, float)> brushList = new List<(float, float, float, float, float, float, float, float)>();
-    private Color BrushColor;
+    private Color BrushColor = Color.black;
     private Collider my_collider;
 
     public Camera canvasCam, sceneCamera;
