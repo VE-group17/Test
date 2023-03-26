@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17718498, g: 0.22180736, b: 0.30401886, a: 1}
+  m_IndirectSpecularColor: {r: 0.17727396, g: 0.22192706, b: 0.30416876, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -38109,6 +38109,7 @@ GameObject:
   - component: {fileID: 2404132116312734932}
   - component: {fileID: 2404132116313734678}
   - component: {fileID: 2404132116313734679}
+  - component: {fileID: 2404132116313734680}
   m_Layer: 0
   m_Name: Block-B4
   m_TagString: Whiteboard
@@ -38207,6 +38208,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   texture: {fileID: 0}
   textureSize: {x: 2048, y: 2048}
+--- !u!114 &2404132116313734680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2404132116311728341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9440bff94bf824bd58558f31df0325ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brushContainer: {fileID: 4205170221602351179}
+  canvasCam: {fileID: 4205170220954027797}
 --- !u!114 &2404782058690993572
 MonoBehaviour:
   m_ObjectHideFlags: 0
