@@ -35,17 +35,5 @@ public class BrushClass : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            GetComponent<SpriteRenderer>().sprite = sp1;
-        }
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            GetComponent<SpriteRenderer>().sprite = sp2;
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            GetComponent<SpriteRenderer>().sprite = spnone;
-        }
     }
 }
