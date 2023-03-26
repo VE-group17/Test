@@ -2422,6 +2422,7 @@ GameObject:
   - component: {fileID: 673556570}
   - component: {fileID: 673556569}
   - component: {fileID: 673556568}
+  - component: {fileID: 673556572}
   m_Layer: 5
   m_Name: Color Canvas
   m_TagString: Untagged
@@ -2504,13 +2505,25 @@ RectTransform:
   m_Children:
   - {fileID: 6407966540019976567}
   m_Father: {fileID: 3309388529835325553}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0.1}
-  m_SizeDelta: {x: 200, y: 200}
+  m_SizeDelta: {x: 200, y: 280}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &673556572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673556567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02cbd4f5d5609ca4595310fdfa657e63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &675029925
 GameObject:
   m_ObjectHideFlags: 0
@@ -23229,7 +23242,7 @@ Transform:
   - {fileID: 1710676294582613282}
   - {fileID: 950218381302285533}
   m_Father: {fileID: 3309388529835325553}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &563368459151826214
 GameObject:
@@ -52574,11 +52587,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 673556571}
   - {fileID: 4387748793003719494}
   - {fileID: 4416150736193844423}
   - {fileID: 4196908472017152316}
   - {fileID: 556490838109920855}
+  - {fileID: 673556571}
   m_Father: {fileID: 5972111315440591894}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -58179,7 +58192,7 @@ Transform:
   m_Children:
   - {fileID: 4235910616939199104}
   m_Father: {fileID: 3309388529835325553}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4200380938115569614
 GameObject:
@@ -60387,7 +60400,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3309388529835325553}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4396356852990390498
 MonoBehaviour:
@@ -60432,7 +60445,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3309388529835325553}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4416625639858986928
 GameObject:
@@ -76015,6 +76028,7 @@ GameObject:
   - component: {fileID: 6407966540019976560}
   - component: {fileID: 6407966540019976561}
   - component: {fileID: 6407966540019976566}
+  - component: {fileID: 6407966540019976568}
   m_Layer: 5
   m_Name: FlexibleColorPicker
   m_TagString: Untagged
@@ -76157,6 +76171,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 280}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6407966540019976568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6407966540019976564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 167ada040e6c54aaf96421358765606b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &6407966540027763060
 CanvasRenderer:
   m_ObjectHideFlags: 0
