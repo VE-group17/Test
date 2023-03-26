@@ -21,12 +21,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private GameObject background;
     private bool painting;
     private List<(float, float, float, float, float, float, float, float)> brushList = new List<(float, float, float, float, float, float, float, float)>();
+    private Color BrushColor;
+    private Collider my_collider;
+
     public Camera canvasCam, sceneCamera;
     public Sprite cursorPaint;
     public GameObject brushContainer;
-
-    private Collider my_collider;
-
+    public FlexibleColorPicker fcp;
     public GameObject AvatarManager;
     public string myID;
     public string ownerID;
@@ -53,6 +54,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private void Start()
     {
+        fcp.onColorChange.AddListener(OnChangeColor);
         context = NetworkScene.Register(this);
         var shader = Shader.Find("Particles/Standard Unlit");
         drawingMaterial = new Material(shader);
@@ -61,7 +63,9 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         my_collider = GetComponent<Collider>();
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
     }
-
+    private void OnChangeColor(Color co) {
+        BrushColor = co;
+    }
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
     {
         var data = msg.FromJson<Message>();
@@ -197,7 +201,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private void BeginDrawing()
     {
-        brushColor = ColorSelector.GetColor ();
+        brushColor = BrushColor;
         Vector3 uvWorldPosition = Vector3.zero;	
         Vector3 hitPoint = Vector3.zero;	
         
