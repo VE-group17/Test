@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ColorPicker : MonoBehaviour
 {
-    public GameObject AvatarManager;
+    // public GameObject AvatarManager;
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +15,6 @@ public class ColorPicker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = AvatarManager.gameObject.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.transform.GetChild(1).transform.position;
+        // transform.position = AvatarManager.gameObject.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.transform.GetChild(1).transform.position;
     }
 }
