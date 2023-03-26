@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 437082}
   - component: {fileID: 21275448}
-  - component: {fileID: 7766934233270803948}
+  - component: {fileID: -7068717437943099654}
   m_Layer: 0
   m_Name: BrushEntity
   m_TagString: Untagged
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7766934233270803948
+--- !u!114 &-7068717437943099654
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,3 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79a640a6358f94657ba00cf32c72f02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sp1: {fileID: 0}
+  sp2: {fileID: 0}
+  spnone: {fileID: 0}
