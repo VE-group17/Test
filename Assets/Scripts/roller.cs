@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Ubiq.XR;
 using UnityEngine;
+using Ubiq.Messaging;
 
 public class roller : MonoBehaviour, IGraspable, IUseable
 {
+    private NetworkContext context;
+
     [SerializeField] private Transform _tip;
     [SerializeField] private int _penSize = 35;
     public float mix_coef = 0.4f;
@@ -22,9 +25,18 @@ public class roller : MonoBehaviour, IGraspable, IUseable
 
     // Start is called before the first frame update
    // private Collider my_collider;
+    private struct Message{
+        public Color color;
+        public Message(Color color)
+        {
+            this.color = color;
+        }
+    }
 
     void Start()
     {
+        context = NetworkScene.Register(this);
+
         _renderer = _tip.GetComponent<Renderer>();
         _colors = Enumerable.Repeat(_renderer.material.color, _penSize * _penSize).ToArray();
         _tipHeight = 0.1f;
@@ -34,6 +46,14 @@ public class roller : MonoBehaviour, IGraspable, IUseable
        // my_collider = GetComponent<Collider>();
 
     }
+
+    public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
+    {
+        var data = msg.FromJson<Message>();
+        Transform brush = transform.GetChild(5).GetChild(0).GetComponent<Transform>();
+        brush.GetComponent<Renderer>().material.color = data.color;
+    }
+
     void IGraspable.Grasp(Ubiq.XR.Hand controller)
     {
         //GetComponent<Rigidbody>().useGravity = false;
@@ -82,6 +102,7 @@ public class roller : MonoBehaviour, IGraspable, IUseable
                 // print(brush.name);
                 // transform.GetComponent<Material>().color = paint_color;
 
+                context.SendJson(new Message(paint_color));
 
 
             }
