@@ -104,14 +104,16 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             currentDrawing = null;
             this.brushList = new List<(float, float, float, float, float, float, float, float)>();
             // my_collider.isTrigger = true;
-            GetComponent<Collider>().isTrigger = true;
-            GetComponent<Rigidbody>().useGravity = false;
+        }
+        if (ownerID=="")
+        {
+            GetComponent<Collider>().isTrigger = false;
+            GetComponent<Rigidbody>().useGravity = true;
         }
         else
         {
-            // my_collider.isTrigger = false;
-            GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
+            GetComponent<Collider>().isTrigger = true;
+            GetComponent<Rigidbody>().useGravity = false;
         }
     }
 
@@ -150,7 +152,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     void Release() //被动release，因为别人拿走了
     {
         owner = false; // new
-        // this.controller = null;
+        this.controller = null;
     }
 
     void IUseable.Use(Hand controller)
