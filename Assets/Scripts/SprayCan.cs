@@ -22,7 +22,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private bool painting;
     private List<(float, float, float, float, float, float, float, float)> brushList = new List<(float, float, float, float, float, float, float, float)>();
     private Color BrushColor = Color.black;
-    private Collider my_collider;
+    // private Collider my_collider;
 
     public Camera canvasCam, sceneCamera;
     public Sprite cursorPaint;
@@ -60,7 +60,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         drawingMaterial = new Material(shader);
         brushColor = Color.blue;
 
-        my_collider = GetComponent<Collider>();
+        // my_collider = GetComponent<Collider>();
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
     }
     private void OnChangeColor(Color co) {
@@ -99,11 +99,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             context.SendJson(new Message(transform,isDrawing:currentDrawing,myID,brushString));
             currentDrawing = null;
             this.brushList = new List<(float, float, float, float, float, float, float, float)>();
-            my_collider.isTrigger = true;
+            // my_collider.isTrigger = true;
+            GetComponent<Collider>().isTrigger = true;
         }
         else
         {
-            my_collider.isTrigger = false;
+            // my_collider.isTrigger = false;
+            GetComponent<Collider>().isTrigger = false;
         }
     }
 

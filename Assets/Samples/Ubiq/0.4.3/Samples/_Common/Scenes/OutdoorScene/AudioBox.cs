@@ -49,10 +49,12 @@ public class AudioBox : MonoBehaviour, IUseable, IGraspable
             transform.position = follow.transform.position;
             transform.rotation = follow.transform.rotation;
             body.isKinematic = true;
+            GetComponent<Collider>().isTrigger = true;
         }
         else
         {
             body.isKinematic = false;
+            GetComponent<Collider>().isTrigger = false;
         }
     }
 }
