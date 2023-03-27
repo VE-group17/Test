@@ -8,6 +8,7 @@ using Ubiq.Messaging;
 // option.
 public class Graspable_ladder : MonoBehaviour, IGraspable
 {
+    public static bool grap_ladder = false;
     private Hand controller;
     private NetworkContext context; // new
     private bool owner; // new
@@ -31,6 +32,7 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         // 2. Register the object with the network scene. This provides a
         // NetworkID for the object and lets it get messages from remote users
         context = NetworkScene.Register(this);
+        grap_ladder = false;
     }
 
     // new
@@ -69,6 +71,7 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         // 5. Define ownership as 'who holds the item currently'
         owner = true; // new
         this.controller = controller;
+        grap_ladder = true;
     }
 
     void IGraspable.Release(Hand controller)
@@ -76,6 +79,7 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         // As 5. above, define ownership as 'who holds the item currently'
         owner = false; // new
         this.controller = null;
+        grap_ladder = false;
     }
 
     // Note about ownership: 'ownership' is just one way of designing this
