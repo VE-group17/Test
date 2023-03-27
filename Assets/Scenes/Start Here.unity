@@ -884,7 +884,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 0
 --- !u!65 &130181747
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -893,7 +893,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 130181745}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.3, z: 0.4}
@@ -17150,7 +17150,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 2
+  m_CollisionDetection: 0
 --- !u!65 &1457613519
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17159,7 +17159,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1457613517}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.3, z: 0.4}
@@ -18866,7 +18866,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1821371153}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.3, z: 0.4}
@@ -41244,7 +41244,7 @@ GameObject:
   - component: {fileID: 3050174858953004553}
   - component: {fileID: 3050174858953004545}
   - component: {fileID: 3050174858953004554}
-  - component: {fileID: 3050174858953004552}
+  - component: {fileID: 3050174858953004555}
   m_Layer: 0
   m_Name: roller 1
   m_TagString: Untagged
@@ -53890,22 +53890,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &3050174858953004552
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2386825833861401789}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 2
 --- !u!114 &3050174858953004553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53919,6 +53903,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hand_roller_offset: {x: 0, y: 0, z: 0}
+  AvatarManager: {fileID: 927339328}
+  localPlayerID: 
+  ownerID: 
 --- !u!136 &3050174858953004554
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -53933,6 +53920,22 @@ CapsuleCollider:
   m_Height: 3.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!54 &3050174858953004555
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2386825833861401789}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3053383329134340737
 GameObject:
   m_ObjectHideFlags: 0
@@ -73317,13 +73320,13 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1206544754405695169}
   serializedVersion: 2
-  m_Mass: 20
-  m_Drag: 0
-  m_AngularDrag: 100
+  m_Mass: 80
+  m_Drag: 10
+  m_AngularDrag: 1
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 116
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!224 &5801185373028235381
 RectTransform:
@@ -86614,7 +86617,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1939723252947843969}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.75
   m_Height: 5.4
   m_Direction: 0
@@ -95930,7 +95933,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 2
+  m_CollisionDetection: 0
 --- !u!114 &7703245048354330723
 MonoBehaviour:
   m_ObjectHideFlags: 0
