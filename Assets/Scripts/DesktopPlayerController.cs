@@ -11,9 +11,9 @@ namespace Ubiq.XR
     {
         [NonSerialized]
         ///
-        public float speedUpDown = 1f;
-        public int inside_ladder = 0;
-        public Graspable_ladder GPL;
+        public float speedUpDown = 1f; // speed of climping
+        public int inside_ladder = 0; // count how many colliders have player intersected with
+        public Graspable_ladder GPL; // import public variables from Graspable_ladder script
         ///
         private Vector3 velocity;
         private Vector3 userLocalPosition;
@@ -102,19 +102,19 @@ namespace Ubiq.XR
             transform.position += movement;
         }
         ///
-        private void OnTriggerEnter(Collider col)
+        private void OnTriggerEnter(Collider col) // When player inside a ladder collider
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside_ladder++;
+                inside_ladder++; // count how many colliders have player intersected with
             } 
         }
 
-        private void OnTriggerExit(Collider col)
+        private void OnTriggerExit(Collider col) // When player outside a ladder collider
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside_ladder--;
+                inside_ladder--; // count how many colliders have player intersected with
             } 
         }
         ///
@@ -162,13 +162,13 @@ namespace Ubiq.XR
 
         private void destmove()
         {
-            OnMouse();
-            OnKeys();
-            if (transform.position.y > 0.1f)
+            OnMouse(); // by Mouse
+            OnKeys(); // by Keyboard
+            if (transform.position.y > 0.1f) // Make player on ground
             {
                 transform.position += Vector3.down * Math.Max((transform.position.y - 0.1f), 1.0f) * Time.deltaTime;
             }
-            else
+            else // Make player on ground
             {
                 transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
             }
@@ -176,12 +176,12 @@ namespace Ubiq.XR
 
         private void climp_ladder()
         {
-            Vector3 movement = new Vector3(0f, 0f, 0f);
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+            Vector3 movement = new Vector3(0f, 0f, 0f); 
+            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) // Up ladder
             {
                 movement += new Vector3(0f, 1f, 0f);
             }
-            if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) // Down ladder
             {
                 movement += new Vector3(0f, -0.7f, -0.2f);
             }
@@ -199,15 +199,13 @@ namespace Ubiq.XR
                 transform.localEulerAngles = Vector3.zero;
                 cameraContainer.localEulerAngles = Vector3.zero;
             }
-            ///
-            if(inside_ladder > 0 && GPL.grap_ladder == false)
+            if(inside_ladder > 0 && GPL.grap_ladder == false) // When player is inside ladder and not grab ladder
             {
-                climp_ladder();
+                climp_ladder(); // Movement of Climbing
             } 
-            
             else 
             {
-                destmove();
+                destmove(); // Movement of Climbing
             }
         }
 

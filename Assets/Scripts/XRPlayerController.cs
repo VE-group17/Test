@@ -10,13 +10,13 @@ namespace Ubiq.XR
     /// </summary>
     
     public class XRPlayerController : MonoBehaviour
-    {   
+    {
         ///
-        public float speedUpDown = 1f;
-        public int inside_ladder = 0;
-        public Graspable_ladder GPL;
+        public float speedUpDown = 1f; // speed of climping
+        public int inside_ladder = 0; // count how many colliders have player intersected with
+        public Graspable_ladder GPL; // import public variables from Graspable_ladder script
         ///
-        
+
         public bool dontDestroyOnLoad = true;
 
         private static XRPlayerController singleton;
@@ -58,19 +58,19 @@ namespace Ubiq.XR
             handControllers = GetComponentsInChildren<HandController>();
         }
         ///
-        private void OnTriggerEnter(Collider col)
+        private void OnTriggerEnter(Collider col) // When player inside a ladder collider
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside_ladder++;
+                inside_ladder++; // count how many colliders have player intersected with
             } 
         }
 
-        private void OnTriggerExit(Collider col)
+        private void OnTriggerExit(Collider col) // When player outside a ladder collider
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside_ladder--;
+                inside_ladder--; // count how many colliders have player intersected with
             } 
         }
         ///
@@ -125,7 +125,7 @@ namespace Ubiq.XR
 
         private void xrmove()
         {
-            foreach (var item in handControllers)
+            foreach (var item in handControllers) // Move by controller
             {
                 if (item.Right)
                 {
@@ -149,17 +149,18 @@ namespace Ubiq.XR
                 }
             }
 
+            // Move by local real world
             var headProjectionXZ = transform.InverseTransformPoint(headCamera.transform.position);
             headProjectionXZ.y = 0;
             userLocalPosition.x += (headProjectionXZ.x - userLocalPosition.x) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.x - userLocalPosition.x));
             userLocalPosition.z += (headProjectionXZ.z - userLocalPosition.z) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.z - userLocalPosition.z));
             userLocalPosition.y = 0;
             ///
-            if (transform.position.y > 0.1f)
+            if (transform.position.y > 0.1f) // Make player on ground
             {
                 transform.position += Vector3.down * Math.Max((transform.position.y - 0.1f), 1.0f) * Time.deltaTime;
             }
-            else
+            else // Make player on ground
             {
                 transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
             }
@@ -178,15 +179,14 @@ namespace Ubiq.XR
                     {
                         var speedMultiplier = Mathf.InverseLerp(joystickDeadzone, 1.0f, mag);
                         var worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
-                        if (dir.y >= 0)
+                        if (dir.y >= 0) // Up ladder
                         {
                             worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
                         }
-                        else
+                        else // Down ladder
                         {
                             worldDir = headCamera.transform.TransformDirection(0, 0.7f * dir.y, -0.2f);
                         }
-                        // var worldDir = headCamera.transform.TransformDirection(dir.x,0,dir.y);
                         worldDir.z = 0;
                         worldDir.x = 0;
                         var distance = (joystickFlySpeed * Time.deltaTime);
@@ -198,15 +198,12 @@ namespace Ubiq.XR
 
         private void Update()
         {
-            // Update the foot position. This is done by pulling the feet using a rubber band.
-            // Decoupling the feet in this way allows the user to do things like lean over edges, when the ground check is enabled.
-            // This can be effectively disabled by setting the animation curve to a constant high value.
-            if(inside_ladder > 0 && GPL.grap_ladder == false)
+            if(inside_ladder > 0 && GPL.grap_ladder == false) // When player is inside ladder and not grab ladder
             {
-                climb_ladder();
+                climb_ladder(); // Movement of Climbing
             }
             else {
-                xrmove();
+                xrmove(); // Movement of Climbing
             }
         }
 
