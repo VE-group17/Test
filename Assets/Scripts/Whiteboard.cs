@@ -9,7 +9,7 @@ public class Whiteboard : MonoBehaviour
     void Start()
     {
         var r = GetComponent<Renderer>();
-        texture = new Texture2D((int)textureSize.x, (int)textureSize.y);
+        //texture = new Texture2D((int)textureSize.x, (int)textureSize.y);
         print(r.materials.Length);
         r.material.SetTexture("_DetailAlbedoMap", texture);
      //  r.materials[1].mainTexture = texture;
