@@ -31,6 +31,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     public GameObject AvatarManager;
     public string myID;
     public string ownerID;
+
+    public int childCount;
     
     Color brushColor;
     // public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
@@ -62,6 +64,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
         // my_collider = GetComponent<Collider>();
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
+        childCount = AvatarManager.gameObject.transform.childCount;
+        // Debug.Log("my ID: "+myID);
     }
     private void OnChangeColor(Color co) {
         BrushColor = co;

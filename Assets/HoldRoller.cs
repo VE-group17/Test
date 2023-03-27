@@ -14,6 +14,8 @@ public class HoldRoller : MonoBehaviour, IGraspable
     public string myID;
     public string ownerID;
 
+    private bool forceRelease;
+
     // new
     // 1. Define a message format. Let's us know what to expect on send and recv
     private struct Message
@@ -22,14 +24,11 @@ public class HoldRoller : MonoBehaviour, IGraspable
         public Quaternion rotation;
 
         public string ownerID;
-        public bool isHolding; // someone is holding
 
-        public Message(Transform transform, bool isHolding, string ownerID)
+        public Message(Transform transform, string ownerID)
         {
             this.position = transform.position;
             this.rotation = transform.rotation;
-
-            this.isHolding = isHolding;
             this.ownerID = ownerID;
         }
     }
@@ -38,8 +37,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
     void Start()
     {
         context = NetworkScene.Register(this);
-        myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
-        Debug.Log("my ID: "+myID);
+
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
@@ -50,36 +48,27 @@ public class HoldRoller : MonoBehaviour, IGraspable
         transform.position = data.position;
         transform.rotation = data.rotation;
         ownerID = data.ownerID;
-
-        // if someone is holding, and that is not local player, change local object component
-        if(data.isHolding && !owner) 
-        {
-            GetComponent<Collider>().isTrigger = true;
-            GetComponent<Rigidbody>().useGravity = false;
-        }
-        else
-        {
-            GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
-        }
         
     }
 
     // FixedUpdate 比 Update 早。OnTrigger 和 OnCollision 在 FixedUpdate 里
     private void FixedUpdate()
     {
+        myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
+        Debug.Log("my ID: "+myID);
+
         if (owner)
         {
             // 4. Send transform update messages if we are the current 'owner'
-            context.SendJson(new Message(transform,owner,myID));
+            context.SendJson(new Message(transform,myID));
 
             GetComponent<Collider>().isTrigger = true;
-            GetComponent<Rigidbody>().useGravity = false;
+            // GetComponent<Rigidbody>().useGravity = false;
         }
         else
         {
             GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
+            // GetComponent<Rigidbody>().useGravity = true;
         }
     }
 
@@ -110,6 +99,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
         }
         if(owner & (myID != ownerID))
         {
+            forceRelease = true;
             Release();
         }
     }
@@ -120,12 +110,23 @@ public class HoldRoller : MonoBehaviour, IGraspable
 
     void IGraspable.Grasp(Hand controller)
     {
+        // if(!pass)
+        // {
+        //     Debug.Log("grasp");
+        //     // 5. Define ownership as 'who holds the item currently'
+        //     owner = true; // new
+        //     this.controller = controller;
+
+        //     ownerID = myID;
+        // }
         Debug.Log("grasp");
         // 5. Define ownership as 'who holds the item currently'
         owner = true; // new
         this.controller = controller;
 
         ownerID = myID;
+        GetComponent<Rigidbody>().useGravity = false;
+
     }
 
     void IGraspable.Release(Hand controller)
@@ -136,6 +137,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
         this.controller = null;
 
         ownerID = "";
+        GetComponent<Rigidbody>().useGravity = true;
 
     }
 
