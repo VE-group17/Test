@@ -8,7 +8,7 @@ using Ubiq.Messaging;
 // option.
 public class Graspable_ladder : MonoBehaviour, IGraspable
 {
-    public static bool grap_ladder = false;
+    public bool grap_ladder = false;
     private Hand controller;
     private NetworkContext context; // new
     private bool owner; // new
@@ -61,7 +61,7 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         if (controller)
         {
             Vector3 position_new = controller.transform.position;
-            position_new.y = 0.0f;
+            position_new.y = transform.position.y;
             transform.position = position_new;
         }
     }

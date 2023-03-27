@@ -12,7 +12,8 @@ namespace Ubiq.XR
         [NonSerialized]
         ///
         public float speedUpDown = 1f;
-        public bool inside = false;
+        public int inside_ladder = 0;
+        public Graspable_ladder GPL;
         ///
         private Vector3 velocity;
         private Vector3 userLocalPosition;
@@ -105,7 +106,7 @@ namespace Ubiq.XR
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside = !inside;
+                inside_ladder++;
             } 
         }
 
@@ -113,7 +114,7 @@ namespace Ubiq.XR
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside = !inside;
+                inside_ladder--;
             } 
         }
         ///
@@ -163,17 +164,32 @@ namespace Ubiq.XR
         {
             OnMouse();
             OnKeys();
-            ///
             if (transform.position.y > 0.1f)
             {
                 transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
 
-                //transform.position += Vector3.down * 0.2f * Time.deltaTime;
+                //transform.position += Vector3.down * 0.7f * Time.deltaTime;
             }
             else
             {
                 transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
             }
+        }
+
+        private void climp_ladder()
+        {
+            Vector3 movement = new Vector3(0f, 0f, 0f);
+            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+            {
+                movement += new Vector3(0f, 1f, 0f);
+            }
+            if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+            {
+                movement += new Vector3(0f, -0.7f, -0.2f);
+            }
+            movement = movement.normalized * (movementSpeed) * Time.deltaTime;
+            movement = headCamera.transform.TransformDirection(movement);
+            transform.position += movement;
         }
 
         private void Update()
@@ -186,36 +202,15 @@ namespace Ubiq.XR
                 cameraContainer.localEulerAngles = Vector3.zero;
             }
             ///
-            if(inside == true)
+            if(inside_ladder > 0 && GPL.grap_ladder == false)
             {
-                //GameObject ladder_ = GameObject.Find("StellLadderB");
-                //Vector3 ladder_position = ladder_.transform.position;
-                //ladder_position.y = transform.position.y;
-                //transform.position = ladder_position + first_offset;
-
-                Vector3 movement = new Vector3(0f, 0f, 0f);
-                if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
-                {
-                    movement += new Vector3(0f, 1f, 0f);
-                }
-                if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-                {
-                    movement += new Vector3(0f, -1f, 0f);
-                }
-                movement = movement.normalized * (movementSpeed) * Time.deltaTime;
-                movement = headCamera.transform.TransformDirection(movement);
-                transform.position += movement;
-                
+                climp_ladder();
             } 
             
             else 
-            {///
+            {
                 destmove();
-
             }
-            ///
-            
-            //OnGround(); //todo: finish implementation
         }
 
     }

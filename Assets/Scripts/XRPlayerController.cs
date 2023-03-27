@@ -13,7 +13,8 @@ namespace Ubiq.XR
     {   
         ///
         public float speedUpDown = 1f;
-        public bool inside = false;
+        public int inside_ladder = 0;
+        public Graspable_ladder GPL;
         ///
         
         public bool dontDestroyOnLoad = true;
@@ -61,7 +62,7 @@ namespace Ubiq.XR
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside = !inside;
+                inside_ladder++;
             } 
         }
 
@@ -69,14 +70,14 @@ namespace Ubiq.XR
         {
             if(col.gameObject.tag == "Ladder")
             {
-                inside = !inside;
+                inside_ladder--;
             } 
         }
         ///
         private void Start()
-        {   
+        {
             ///
-            inside = false;
+            inside_ladder = 0;
             ///
             foreach (var item in GetComponentsInChildren<TeleportRay>())
             {
@@ -164,63 +165,48 @@ namespace Ubiq.XR
             }
         }
 
+
+        private void climb_ladder()
+        {
+            foreach (var item in handControllers)
+            {
+                if (item.Left)
+                {
+                    var dir = item.Joystick.normalized;
+                    var mag = item.Joystick.magnitude;
+                    if (mag > joystickDeadzone)
+                    {
+                        var speedMultiplier = Mathf.InverseLerp(joystickDeadzone, 1.0f, mag);
+                        var worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
+                        if (dir.y >= 0)
+                        {
+                            worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
+                        }
+                        else
+                        {
+                            worldDir = headCamera.transform.TransformDirection(0, 0.7f * dir.y, -0.2f);
+                        }
+                        // var worldDir = headCamera.transform.TransformDirection(dir.x,0,dir.y);
+                        worldDir.z = 0;
+                        worldDir.x = 0;
+                        var distance = (joystickFlySpeed * Time.deltaTime);
+                        transform.position += distance * worldDir.normalized;
+                    }
+                }
+            }
+        }
+
         private void Update()
         {
             // Update the foot position. This is done by pulling the feet using a rubber band.
             // Decoupling the feet in this way allows the user to do things like lean over edges, when the ground check is enabled.
             // This can be effectively disabled by setting the animation curve to a constant high value.
-            if(inside == true)
+            if(inside_ladder > 0 && GPL.grap_ladder == false)
             {
-                if (Input.GetKeyDown(KeyCode.JoystickButton1))
-                {
-                    if (transform.position.y - 0.1f < 0.2f)
-                    {
-                        xrmove();
-                    }
-                    if (transform.position.y > 0.1f)
-                    {
-                        transform.position += Vector3.down * (transform.position.y - 0.1f) * 5.0f * Time.deltaTime;
-
-                        //transform.position += Vector3.down * 0.2f * Time.deltaTime;
-                    }
-                    else
-                    {
-                        transform.position += Vector3.up * (0.1f - transform.position.y) * Time.deltaTime * 3f;
-                    }
-                } else
-                {
-                    foreach (var item in handControllers)
-                    {
-                        if (item.Left)
-                        {
-                            var dir = item.Joystick.normalized;
-                            var mag = item.Joystick.magnitude;
-                            if (mag > joystickDeadzone)
-                            {
-                                var speedMultiplier = Mathf.InverseLerp(joystickDeadzone, 1.0f, mag);
-                                var worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
-                                if (dir.y >= 0)
-                                {
-                                    worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
-                                }
-                                else
-                                {
-                                    worldDir = headCamera.transform.TransformDirection(0, dir.y, 0);
-                                }
-                                // var worldDir = headCamera.transform.TransformDirection(dir.x,0,dir.y);
-                                worldDir.z = 0;
-                                worldDir.x = 0;
-                                var distance = (joystickFlySpeed * Time.deltaTime);
-                                transform.position += distance * worldDir.normalized;
-                            }
-                        }
-                    }
-                }
-                
-            } 
+                climb_ladder();
+            }
             else {
                 xrmove();
-                ///
             }
         }
 
@@ -229,7 +215,6 @@ namespace Ubiq.XR
             if (!headCamera) {
                 return;
             }
-
             Gizmos.color = Color.blue;
             Gizmos.matrix = transform.localToWorldMatrix;
            //Gizmos.DrawWireCube(Vector3.zero, new Vector3(Radius, 0.1f, Radius));
