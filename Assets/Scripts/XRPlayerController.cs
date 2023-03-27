@@ -157,7 +157,7 @@ namespace Ubiq.XR
             ///
             if (transform.position.y > 0.1f)
             {
-                transform.position += Vector3.down * (transform.position.y - 0.1f) * Time.deltaTime;
+                transform.position += Vector3.down * Math.Max((transform.position.y - 0.1f), 1.0f) * Time.deltaTime;
             }
             else
             {
