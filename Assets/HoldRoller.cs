@@ -11,7 +11,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
     public Vector3 hand_roller_offset;
     
     public GameObject AvatarManager;
-    public string localPlayerID;
+    public string myID;
     public string ownerID;
 
     // new
@@ -38,7 +38,8 @@ public class HoldRoller : MonoBehaviour, IGraspable
     void Start()
     {
         context = NetworkScene.Register(this);
-        localPlayerID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
+        myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
+        Debug.Log("my ID: "+myID);
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
@@ -70,7 +71,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
         if (owner)
         {
             // 4. Send transform update messages if we are the current 'owner'
-            context.SendJson(new Message(transform,owner,localPlayerID));
+            context.SendJson(new Message(transform,owner,myID));
 
             GetComponent<Collider>().isTrigger = true;
             GetComponent<Rigidbody>().useGravity = false;
@@ -107,7 +108,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
             transform.position = controller.transform.position + hand_roller_offset;
             transform.rotation = controller.transform.rotation;
         }
-        if(owner & (localPlayerID != ownerID))
+        if(owner & (myID != ownerID))
         {
             Release();
         }
@@ -124,7 +125,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
         owner = true; // new
         this.controller = controller;
 
-        ownerID = localPlayerID;
+        ownerID = myID;
     }
 
     void IGraspable.Release(Hand controller)
