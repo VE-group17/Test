@@ -16022,6 +16022,7 @@ GameObject:
   - component: {fileID: 1299818259}
   - component: {fileID: 1299818258}
   - component: {fileID: 1299818257}
+  - component: {fileID: 1299818262}
   m_Layer: 0
   m_Name: Stepladder
   m_TagString: Ladder
@@ -16037,8 +16038,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1299818254}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.387, y: 1.6005685, z: 1.29}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 3.387, y: 3.067, z: 1.29}
+  m_LocalScale: {x: 1.6, y: 1.9, z: 1.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 543450653091255776}
@@ -16056,8 +16057,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.15, z: 0.25}
-  m_Center: {x: 0, y: -0.2410518, z: -0.89353764}
+  m_Size: {x: 0.35, y: 0.15684915, z: 0.36563334}
+  m_Center: {x: 0, y: -0.26428378, z: -0.8583538}
 --- !u!65 &1299818257
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16069,7 +16070,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.15, z: 0.25}
+  m_Size: {x: 0.35, y: 0.15, z: 0.25}
   m_Center: {x: 0, y: -1.3321893, z: -1.3253851}
 --- !u!65 &1299818258
 BoxCollider:
@@ -16082,8 +16083,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.15, z: 0.25}
-  m_Center: {x: 0, y: -1.05, z: -1.2139959}
+  m_Size: {x: 0.35, y: 0.23127031, z: 0.2820673}
+  m_Center: {x: 0, y: -1.0093653, z: -1.1979623}
 --- !u!65 &1299818259
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16095,8 +16096,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.15, z: 0.25}
-  m_Center: {x: 0, y: -0.78, z: -1.1}
+  m_Size: {x: 0.35, y: 0.27113008, z: 0.2924304}
+  m_Center: {x: 0, y: -0.75086856, z: -1.0787847}
 --- !u!65 &1299818260
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16108,8 +16109,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.15, z: 0.25}
-  m_Center: {x: 0, y: -0.5, z: -0.9976597}
+  m_Size: {x: 0.35, y: 0.22471079, z: 0.34355673}
+  m_Center: {x: 0, y: -0.495521, z: -0.9711857}
 --- !u!54 &1299818261
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -16121,11 +16122,24 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1299818262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299818254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71fc94354d18440caa1325e5e0f9ea69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grap_ladder: 0
 --- !u!1 &1343141029
 GameObject:
   m_ObjectHideFlags: 0
@@ -40634,6 +40648,7 @@ GameObject:
   - component: {fileID: 6045227842801757975}
   - component: {fileID: 887866911811507491}
   - component: {fileID: 5717970009897752984}
+  - component: {fileID: 6045227842801757977}
   m_Layer: 0
   m_Name: Steel1
   m_TagString: Untagged
@@ -54985,7 +55000,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2511947340453853016}
   m_LocalRotation: {x: 0.000000015454312, y: 0.7071067, z: -0.000000015454308, w: 0.7071068}
-  m_LocalPosition: {x: 11.555, y: -0, z: -5.828}
+  m_LocalPosition: {x: 10.92, y: 0.17, z: -5.83}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -57225,6 +57240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71fc94354d18440caa1325e5e0f9ea69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grap_ladder: 0
 --- !u!224 &3542566541675702884
 RectTransform:
   m_ObjectHideFlags: 0
@@ -61440,10 +61456,10 @@ RectTransform:
   m_Father: {fileID: 4875747907047595671}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 53, y: -22.5}
-  m_SizeDelta: {x: 30, y: 40}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4173838783914590288
 MonoBehaviour:
@@ -73539,7 +73555,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1cd593c4e7e34cfca304d71965b69dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inside: 0
+  inside_ladder: 0
+  GPL: {fileID: 1299818262}
   headCamera: {fileID: 1206544755303185489}
   cameraContainer: {fileID: 1206544754955745546}
   cameraRubberBand:
@@ -73565,7 +73582,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedUpDown: 1
-  inside: 0
+  inside_ladder: 0
+  GPL: {fileID: 1299818262}
   dontDestroyOnLoad: 1
   joystickDeadzone: 0.1
   joystickFlySpeed: 1.2
@@ -75488,6 +75506,22 @@ Transform:
   m_Father: {fileID: 543450653091255776}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &6045227842801757977
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2287712648039031804}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6053037396730574870
 GameObject:
   m_ObjectHideFlags: 0
@@ -97205,10 +97239,10 @@ RectTransform:
   m_Father: {fileID: 4875747907047595671}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 21, y: -22.5}
-  m_SizeDelta: {x: 30, y: 40}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &7918013234164772130
 RectTransform:
