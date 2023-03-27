@@ -32,7 +32,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     public string myID;
     public string ownerID;
 
-    public int childCount;
+    // public int childCount;
     
     Color brushColor;
     // public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
@@ -64,7 +64,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
         // my_collider = GetComponent<Collider>();
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
-        childCount = AvatarManager.gameObject.transform.childCount;
+        // childCount = AvatarManager.gameObject.transform.childCount;
         // Debug.Log("my ID: "+myID);
     }
     private void OnChangeColor(Color co) {
@@ -105,11 +105,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             this.brushList = new List<(float, float, float, float, float, float, float, float)>();
             // my_collider.isTrigger = true;
             GetComponent<Collider>().isTrigger = true;
+            GetComponent<Rigidbody>().useGravity = false;
         }
         else
         {
             // my_collider.isTrigger = false;
             GetComponent<Collider>().isTrigger = false;
+            GetComponent<Rigidbody>().useGravity = true;
         }
     }
 
@@ -134,7 +136,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         this.controller = controller;
 
         ownerID = myID;
-        GetComponent<Rigidbody>().useGravity = false;
+        // GetComponent<Rigidbody>().useGravity = false;
     }
 
     void IGraspable.Release(Hand controller)
@@ -142,13 +144,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         owner = false;
         ownerID = "";
         this.controller = null;
-        GetComponent<Rigidbody>().useGravity = true;
+        // GetComponent<Rigidbody>().useGravity = true;
     }
 
     void Release() //被动release，因为别人拿走了
     {
         owner = false; // new
-        this.controller = null;
+        // this.controller = null;
     }
 
     void IUseable.Use(Hand controller)
