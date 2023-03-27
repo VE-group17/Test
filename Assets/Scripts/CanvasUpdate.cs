@@ -23,7 +23,12 @@ public class CanvasUpdate : MonoBehaviour
         texture2.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height),0,0);
         texture2.Apply();
 
-        byte[] bytes = texture2.EncodeToPNG();
-        File.WriteAllBytes("screenshot.png", bytes);
+        Renderer m_Renderer = GetComponent<Renderer>();
+        m_Renderer.material.SetTexture("_MainTex", texture2);
+        
+        // byte[] bytes = texture2.EncodeToPNG();
+        // File.WriteAllBytes("screenshot.png", bytes);
+
+        
     }
 }
