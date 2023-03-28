@@ -148,7 +148,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         else
         {
             ownerID = "";
-            owner = false;
             this.controller = null;
         }
     }
