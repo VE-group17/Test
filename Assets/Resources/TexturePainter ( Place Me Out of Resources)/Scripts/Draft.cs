@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 
 public class Draft : MonoBehaviour
 {
-    public Sprite sp1, sp2, spnone;
+    public Sprite UclSprite, LenaSprite, spnone;
     private Sprite edge_sp1, edge_sp2;
     double toAngle = 180.0 / Math.PI;
     private Sprite cur_sprite;
@@ -306,8 +306,8 @@ public class Draft : MonoBehaviour
 
     void Start()
     {
-        edge_sp1 = getedge(sp1);
-        edge_sp2 = getedge(sp2);
+        edge_sp1 = getedge(UclSprite);
+        edge_sp2 = getedge(LenaSprite);
         context = NetworkScene.Register(this);
         cur_sprite = spnone;
     }
@@ -325,11 +325,11 @@ public class Draft : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.U))
         {
-            cur_sprite = sp1;
+            cur_sprite = UclSprite;
         }
         if (Input.GetKeyDown(KeyCode.I))
         {
-            cur_sprite = sp2;
+            cur_sprite = LenaSprite;
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -345,4 +345,17 @@ public class Draft : MonoBehaviour
         }
         GetComponent<SpriteRenderer>().sprite = cur_sprite;
     }
+
+    public void UCL_btn()
+    {
+        cur_sprite = UclSprite;
+        GetComponent<SpriteRenderer>().sprite = cur_sprite;
+    }
+
+    public void Lena_btn()
+    {
+        cur_sprite = LenaSprite;
+        GetComponent<SpriteRenderer>().sprite = cur_sprite;
+    }
+
 }

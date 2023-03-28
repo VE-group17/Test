@@ -97,6 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd5501aa1047d4463b274d8e51f83690, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sp1: {fileID: 21300000, guid: 1e12dfc83fc2747d3a45cb9614154cc2, type: 3}
-  sp2: {fileID: 21300000, guid: ba3cd2fcf2ab042a196198ddf47596ee, type: 3}
+  UclSprite: {fileID: 21300000, guid: ba3cd2fcf2ab042a196198ddf47596ee, type: 3}
+  LenaSprite: {fileID: 21300000, guid: 1e12dfc83fc2747d3a45cb9614154cc2, type: 3}
   spnone: {fileID: 0}
