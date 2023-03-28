@@ -22,6 +22,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private bool painting;
     private List<(float, float, float, float, float, float, float, float)> brushList = new List<(float, float, float, float, float, float, float, float)>();
     private Color BrushColor = Color.black;
+    private bool released = false;
     // private Collider my_collider;
 
     public Camera canvasCam, sceneCamera;
@@ -90,6 +91,11 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         {
             EndDrawing();
         }
+        if(owner && (myID != ownerID))
+        {
+            Release();
+            // Debug.Log("Released! ");
+        }
     }
 
     private void FixedUpdate()
@@ -125,20 +131,26 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             transform.position = controller.transform.position;
             transform.rotation = controller.transform.rotation;
         }
-        if(owner & (myID != ownerID))
-        {
-            Release();
-            // Debug.Log("Released! ");
-        }
+        
     }
 
     void IGraspable.Grasp(Hand controller)
     {
-        owner = true;
-        this.controller = controller;
+        if (!released)
+        {        
+            owner = true;
+            this.controller = controller;
 
-        ownerID = myID;
-        // GetComponent<Rigidbody>().useGravity = false;
+            ownerID = myID;
+            FixedUpdate();
+            // GetComponent<Rigidbody>().useGravity = false;
+        }
+        else
+        {
+            ownerID = "";
+            owner = false;
+            this.controller = null;
+        }
     }
 
     void IGraspable.Release(Hand controller)
@@ -146,6 +158,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         owner = false;
         ownerID = "";
         this.controller = null;
+        released = false;
         // GetComponent<Rigidbody>().useGravity = true;
     }
 
@@ -153,6 +166,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     {
         owner = false; // new
         this.controller = null;
+        released = true;
     }
 
     void IUseable.Use(Hand controller)
