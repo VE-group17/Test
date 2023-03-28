@@ -112,6 +112,8 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
                 Release();
                 // Debug.Log("Released! ");
             }
+            GetComponent<Collider>().isTrigger = true;
+            GetComponent<Rigidbody>().useGravity = false;
         }
         else if ((data.player2 == myID && data.player1 == "") || (data.player1 == myID && data.player2 == ""))
         {
@@ -132,8 +134,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             {
                 EndDrawing();
             }
+            GetComponent<Collider>().isTrigger = true;
+            GetComponent<Rigidbody>().useGravity = false;
         }
-        else if ((data.player2 != "" && data.player2 != myID && data.player1 == "") || (data.player1 != "" && data.player2 != myID) && data.player2 == "")
+        else if ((data.player2 != "" && data.player2 != myID && data.player1 == "") || (data.player1 != "" && data.player1 != myID && data.player2 == ""))
         {
             transform.position = data.position;
             transform.rotation = data.rotation;
@@ -152,6 +156,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             {
                 EndDrawing();
             }
+            GetComponent<Collider>().isTrigger = true;
+            GetComponent<Rigidbody>().useGravity = false;
+        }
+        else if (player1 == "" && player2 == "")
+        {
+            GetComponent<Collider>().isTrigger = false;
+            GetComponent<Rigidbody>().useGravity = true;
         }
 
 
@@ -160,7 +171,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private void FixedUpdate()
     {
         //Debug.Log("FIXED");
-        if (owner)
+        if (player1 == myID || player2 == myID || (player2 =="" && player1=="")) 
         {
             // new
             // float[][] brushArray = brushList.ToArray();
@@ -171,18 +182,18 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             this.brushList = new List<(float, float, float, float, float, float, float, float)>();
             // my_collider.isTrigger = true;
         }
-        if (ownerID == "")
-        {
-            Debug.Log("fixEMPTY");
-            GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
-        }
-        if (ownerID != "")
-        {
-            Debug.Log("fixfull");
-            GetComponent<Collider>().isTrigger = true;
-            GetComponent<Rigidbody>().useGravity = false;
-        }
+        //if (ownerID == "")
+        //{
+        //    Debug.Log("fixEMPTY");
+        //    GetComponent<Collider>().isTrigger = false;
+        //    GetComponent<Rigidbody>().useGravity = true;
+        //}
+        //if (ownerID != "")
+        //{
+        //    Debug.Log("fixfull");
+        //    GetComponent<Collider>().isTrigger = true;
+        //    GetComponent<Rigidbody>().useGravity = false;
+        //}
     }
 
 
