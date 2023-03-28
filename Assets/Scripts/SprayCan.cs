@@ -22,7 +22,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private bool painting;
     private List<(float, float, float, float, float, float, float, float)> brushList = new List<(float, float, float, float, float, float, float, float)>();
     private Color BrushColor = Color.black;
-    private bool released = false;
+    private bool released;
     // private Collider my_collider;
 
     public Camera canvasCam, sceneCamera;
@@ -57,12 +57,14 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private void Start()
     {
+        
         fcp.onColorChange.AddListener(OnChangeColor);
         context = NetworkScene.Register(this);
         var shader = Shader.Find("Particles/Standard Unlit");
         drawingMaterial = new Material(shader);
         brushColor = Color.blue;
-
+        owner = false;
+        released = false;
         // my_collider = GetComponent<Collider>();
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
         // childCount = AvatarManager.gameObject.transform.childCount;
@@ -97,7 +99,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         {
             EndDrawing();
         }
-        if(owner && (myID != ownerID) && ownerID != "")
+        if(owner && (myID != ownerID) && ownerID != "" && released == true)
         {
             Release();
             // Debug.Log("Released! ");
@@ -169,6 +171,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     {
         Debug.Log("Releasssssssss");
         owner = false;
+        Debug.Log("owner false in Release");
         this.controller = null;
         released = false;
         if (!released) 
@@ -184,6 +187,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     {
         Debug.Log("PassiveRRRR");
         owner = false; // new
+        Debug.Log("owner false in PassiveRelease");
         this.controller = null;
         released = true;
     }
