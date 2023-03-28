@@ -22,6 +22,10 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private bool painting;
     private List<(float, float, float, float, float, float, float, float)> brushList = new List<(float, float, float, float, float, float, float, float)>();
     private Color BrushColor = Color.black;
+    private bool released;
+    private string player1;
+    private string player2;
+    private int myPlayerID;
     // private Collider my_collider;
 
     public Camera canvasCam, sceneCamera;
@@ -31,7 +35,9 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     public GameObject AvatarManager;
     public string myID;
     public string ownerID;
-    
+
+    // public int childCount;
+
     Color brushColor;
     // public RenderTexture canvasTexture; // Render Texture that looks at our Base Texture and the painted brushes
     // Amend message to also store current drawing state
@@ -42,71 +48,152 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         public bool isDrawing; // new
         public string ownerID;
         public string brushString;
-        public Message(Transform transform, bool isDrawing, string ownerID, string brushString)
+        public string player1;
+        public string player2;
+        public Message(Transform transform, bool isDrawing, string ownerID, string brushString, string player1, string player2)
         {
             this.position = transform.position;
             this.rotation = transform.rotation;
             this.isDrawing = isDrawing; // new
             this.ownerID = ownerID;
             this.brushString = brushString;
+            this.player1 = player1;
+            this.player2 = player2;
         }
     }
 
     private void Start()
     {
+        player1 = "";
+        player2 = "";
         fcp.onColorChange.AddListener(OnChangeColor);
         context = NetworkScene.Register(this);
         var shader = Shader.Find("Particles/Standard Unlit");
         drawingMaterial = new Material(shader);
         brushColor = Color.blue;
-
+        owner = false;
+        released = false;
         // my_collider = GetComponent<Collider>();
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
+        // childCount = AvatarManager.gameObject.transform.childCount;
+        // Debug.Log("my ID: "+myID);
     }
-    private void OnChangeColor(Color co) {
+    private void OnChangeColor(Color co)
+    {
         BrushColor = co;
     }
-    public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
+    public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
     {
+        Debug.Log("process");
         var data = msg.FromJson<Message>();
-        transform.position = data.position;
-        transform.rotation = data.rotation;
-        var remoteBrushString = data.brushString;
-        ownerID = data.ownerID;
-		// if (Input.GetMouseButton(0)) {
-		// 	BeginDrawing();
-		// }
-        // new
-        // Also start drawing locally when a remote user starts
-        if (data.isDrawing && !currentDrawing)
+
+        if (data.player1 != "" && data.player2 != "")
         {
-            createBrushFromList(remoteBrushString);
+            transform.position = data.position;
+            transform.rotation = data.rotation;
+            var remoteBrushString = data.brushString;
+            var prev_ID = ownerID;
+            ownerID = data.ownerID;
+            if (ownerID == "")
+            {
+                Debug.Log("ownerid = kong in process");
+
+            }
+            if (data.isDrawing && !currentDrawing)
+            {
+                createBrushFromList(remoteBrushString);
+            }
+            if (!data.isDrawing && currentDrawing)
+            {
+                EndDrawing();
+            }
+            if (owner && (prev_ID != ownerID) && ownerID != "" && myID != ownerID && myID == prev_ID)
+            {
+                Release();
+                // Debug.Log("Released! ");
+            }
+            //GetComponent<Collider>().isTrigger = true;
+            //GetComponent<Rigidbody>().useGravity = false;
         }
-        if (!data.isDrawing && currentDrawing)
+        else if ((data.player2 == myID && data.player1 == "") || (data.player1 == myID && data.player2 == ""))
         {
-            EndDrawing();
+            transform.position = data.position;
+            transform.rotation = data.rotation;
+            var remoteBrushString = data.brushString;
+            ownerID = myID;
+            if (ownerID == "")
+            {
+                Debug.Log("ownerid = kong in process");
+
+            }
+            if (data.isDrawing && !currentDrawing)
+            {
+                createBrushFromList(remoteBrushString);
+            }
+            if (!data.isDrawing && currentDrawing)
+            {
+                EndDrawing();
+            }
+           // GetComponent<Collider>().isTrigger = true;
+            //GetComponent<Rigidbody>().useGravity = false;
         }
+        else if ((data.player2 != "" && data.player2 != myID && data.player1 == "") || (data.player1 != "" && data.player1 != myID && data.player2 == ""))
+        {
+            transform.position = data.position;
+            transform.rotation = data.rotation;
+            var remoteBrushString = data.brushString;
+            ownerID = data.ownerID;
+            if (ownerID == "")
+            {
+                Debug.Log("ownerid = kong in process");
+
+            }
+            if (data.isDrawing && !currentDrawing)
+            {
+                createBrushFromList(remoteBrushString);
+            }
+            if (!data.isDrawing && currentDrawing)
+            {
+                EndDrawing();
+            }
+           // GetComponent<Collider>().isTrigger = true;
+           // GetComponent<Rigidbody>().useGravity = false;
+        }
+        else if (player1 == "" && player2 == "")
+        {
+           // GetComponent<Collider>().isTrigger = false;
+           // GetComponent<Rigidbody>().useGravity = false;
+        }
+
+
     }
 
     private void FixedUpdate()
     {
-        if (owner)
+        //Debug.Log("FIXED");
+        if (player1 == myID || player2 == myID || (player2 == "" && player1 == ""))
         {
             // new
             // float[][] brushArray = brushList.ToArray();
             string brushString = string.Join("|", this.brushList.ConvertAll(tuple => string.Join(",", tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4, tuple.Item5, tuple.Item6, tuple.Item7, tuple.Item8)));
-            // Debug.Log(brushString);
-            context.SendJson(new Message(transform,isDrawing:currentDrawing,myID,brushString));
+            Debug.Log("sendddddddddddddddddddddddddddd");
+            context.SendJson(new Message(transform, isDrawing: currentDrawing, myID, brushString, this.player1, this.player2));
             currentDrawing = null;
             this.brushList = new List<(float, float, float, float, float, float, float, float)>();
             // my_collider.isTrigger = true;
-            GetComponent<Collider>().isTrigger = true;
         }
-        else
-        {
-            // my_collider.isTrigger = false;
-            GetComponent<Collider>().isTrigger = false;
-        }
+        //if (ownerID == "")
+        //{
+        //    Debug.Log("fixEMPTY");
+        //    GetComponent<Collider>().isTrigger = false;
+        //    GetComponent<Rigidbody>().useGravity = true;
+        //}
+        //if (ownerID != "")
+        //{
+        //    Debug.Log("fixfull");
+        //    GetComponent<Collider>().isTrigger = true;
+        //    GetComponent<Rigidbody>().useGravity = false;
+        //}
     }
 
 
@@ -117,34 +204,74 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
             transform.position = controller.transform.position;
             transform.rotation = controller.transform.rotation;
         }
-        if(owner & (myID != ownerID))
-        {
-            Release();
-            // Debug.Log("Released! ");
-        }
+
     }
 
     void IGraspable.Grasp(Hand controller)
     {
-        owner = true;
-        this.controller = controller;
+        if (player1 == "")
+        {
+            player1 = myID;
+            myPlayerID = 1;
+        }
+        else if (player2 == "")
+        {
+            player2 = myID;
+            myPlayerID = 2;
+        }
+        Debug.Log("grasp");
+        if (!released)
+        {
+            owner = true;
+            this.controller = controller;
 
-        ownerID = myID;
-        GetComponent<Rigidbody>().useGravity = false;
+            ownerID = myID;
+            FixedUpdate();
+            // GetComponent<Rigidbody>().useGravity = false;
+        }
+        else
+        {
+            ownerID = "";
+            Debug.Log("ownerid = kong in grasp");
+
+            this.controller = null;
+        }
     }
 
     void IGraspable.Release(Hand controller)
+
     {
+        if (myPlayerID == 1)
+        {
+            player1 = "";
+        }
+        else if (myPlayerID == 2)
+        {
+            player2 = "";
+        }
+        myPlayerID = 0;
+
+        Debug.Log("Releasssssssss");
         owner = false;
-        ownerID = "";
+        Debug.Log("owner false in Release");
         this.controller = null;
-        GetComponent<Rigidbody>().useGravity = true;
+        // released = false;
+        // if (!released) 
+        // {
+        ownerID = "";
+        //     Debug.Log("ownerid = kong in release");
+        // }
+        // GetComponent<Rigidbody>().useGravity = true;
+
     }
 
     void Release() //被动release，因为别人拿走了
     {
+        Debug.Log("PassiveRRRR");
         owner = false; // new
+        Debug.Log("owner false in PassiveRelease");
         this.controller = null;
+        released = true;
     }
 
     void IUseable.Use(Hand controller)
@@ -163,7 +290,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     }
 
     void addBrushToList(GameObject brush)
-    {   
+    {
         float a = brush.GetComponent<SpriteRenderer>().color.a;
         float r = brush.GetComponent<SpriteRenderer>().color.r;
         float g = brush.GetComponent<SpriteRenderer>().color.g;
@@ -173,26 +300,26 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         float z = brush.transform.localPosition[2];
         float brushSize = brush.transform.localScale[0];
         // Debug.Log((r,g,b,a,x,y,z,brushSize));
-        this.brushList.Add((r,g,b,a,x,y,z,brushSize));
+        this.brushList.Add((r, g, b, a, x, y, z, brushSize));
     }
 
     void createBrushFromList(string input)
-    {   
+    {
         // Debug.Log("im in createbrushfromlist");
 
         string[] sections = input.Split('|');
         foreach (string section in sections)
         {
             string[] numbers = section.Split(',');
-            Vector3 uvWorldPosition = new Vector3(float.Parse(numbers[4]),float.Parse(numbers[5]),float.Parse(numbers[6]));
-            Color color = new Color(float.Parse(numbers[0]),float.Parse(numbers[1]),float.Parse(numbers[2]),float.Parse(numbers[3]));
+            Vector3 uvWorldPosition = new Vector3(float.Parse(numbers[4]), float.Parse(numbers[5]), float.Parse(numbers[6]));
+            Color color = new Color(float.Parse(numbers[0]), float.Parse(numbers[1]), float.Parse(numbers[2]), float.Parse(numbers[3]));
             float brushSize = float.Parse(numbers[7]);
 
             GameObject tempDrawing = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity"));
-            tempDrawing.GetComponent<SpriteRenderer>().color=color;
-            tempDrawing.transform.parent=brushContainer.transform; //Add the brush to our container to be wiped later
-            tempDrawing.transform.localPosition=uvWorldPosition; //The position of the brush (in the UVMap)
-            tempDrawing.transform.localScale=Vector3.one*brushSize;//The size of the brush
+            tempDrawing.GetComponent<SpriteRenderer>().color = color;
+            tempDrawing.transform.parent = brushContainer.transform; //Add the brush to our container to be wiped later
+            tempDrawing.transform.localPosition = uvWorldPosition; //The position of the brush (in the UVMap)
+            tempDrawing.transform.localScale = Vector3.one * brushSize;//The size of the brush
         }
     }
 
@@ -204,15 +331,16 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     private void BeginDrawing()
     {
         brushColor = BrushColor;
-        Vector3 uvWorldPosition = Vector3.zero;	
-        Vector3 hitPoint = Vector3.zero;	
-        
+        Vector3 uvWorldPosition = Vector3.zero;
+        Vector3 hitPoint = Vector3.zero;
+
         // Debug.Log("begin drawing outside");	
-		if(HitTestUVPosition(ref uvWorldPosition, ref hitPoint)){
-			// GameObject brushObj;
+        if (HitTestUVPosition(ref uvWorldPosition, ref hitPoint))
+        {
+            // GameObject brushObj;
             // Debug.Log("begin drawing");
-            currentDrawing=(GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
-            
+            currentDrawing = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/BrushEntity")); //Paint a brush
+
             float randomZ = Random.Range(0f, 360f);
             // Create a Quaternion representing the random rotation around the z-axis
             // Quaternion randomRotation = Quaternion.Euler(0, 0, randomZ);
@@ -228,40 +356,43 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
 
 
-            currentDrawing.GetComponent<SpriteRenderer>().color=brushColor; //Set the brush color
-			brushColor.a=1.0f; // Brushes have alpha to have a merging effect when painted over.
-			currentDrawing.transform.parent=brushContainer.transform; //Add the brush to our container to be wiped later
-			currentDrawing.transform.localPosition=uvWorldPosition; //The position of the brush (in the UVMap)
-            currentDrawing.transform.localScale=Vector3.one*brushSize;//The size of the brush
+            currentDrawing.GetComponent<SpriteRenderer>().color = brushColor; //Set the brush color
+            brushColor.a = 1.0f; // Brushes have alpha to have a merging effect when painted over.
+            currentDrawing.transform.parent = brushContainer.transform; //Add the brush to our container to be wiped later
+            currentDrawing.transform.localPosition = uvWorldPosition; //The position of the brush (in the UVMap)
+            currentDrawing.transform.localScale = Vector3.one * brushSize;//The size of the brush
 
             addBrushToList(currentDrawing);
-		}
+        }
     }
-    
+
     //Returns the position on the texuremap according to a hit in the mesh collider
-    bool HitTestUVPosition(ref Vector3 uvWorldPosition, ref Vector3 hitPoint){
-		RaycastHit hit;
+    bool HitTestUVPosition(ref Vector3 uvWorldPosition, ref Vector3 hitPoint)
+    {
+        RaycastHit hit;
         GameObject nozzle = GameObject.Find("Cylinder");
-		Vector3 cursorDir = nozzle.transform.forward;
-		// Ray cursorRay=sceneCamera.ScreenPointToRay (cursorPos);
-		Ray cursorRay= new Ray(nozzle.GetComponent<Transform>().position, cursorDir);
-		if (Physics.Raycast(cursorRay,out hit,3)){
+        Vector3 cursorDir = nozzle.transform.forward;
+        // Ray cursorRay=sceneCamera.ScreenPointToRay (cursorPos);
+        Ray cursorRay = new Ray(nozzle.GetComponent<Transform>().position, cursorDir);
+        if (Physics.Raycast(cursorRay, out hit, 3))
+        {
             hitPoint = hit.point;
             // Debug.Log("Inside hitTest");
-			MeshCollider meshCollider = hit.collider as MeshCollider;
-			if (meshCollider == null || meshCollider.sharedMesh == null)
-				return false;			
-			Vector2 pixelUV  = new Vector2(hit.textureCoord.x,hit.textureCoord.y);
+            MeshCollider meshCollider = hit.collider as MeshCollider;
+            if (meshCollider == null || meshCollider.sharedMesh == null)
+                return false;
+            Vector2 pixelUV = new Vector2(hit.textureCoord.x, hit.textureCoord.y);
             // Debug.Log(pixelUV);
-			uvWorldPosition.x=pixelUV.x-canvasCam.orthographicSize;//To center the UV on X
-			uvWorldPosition.y=pixelUV.y-canvasCam.orthographicSize;//To center the UV on Y
-			uvWorldPosition.z=0.0f;
-			return true;
-		}
-		else{		
-			return false;
-		}
-	}
+            uvWorldPosition.x = pixelUV.x - canvasCam.orthographicSize;//To center the UV on X
+            uvWorldPosition.y = pixelUV.y - canvasCam.orthographicSize;//To center the UV on Y
+            uvWorldPosition.z = 0.0f;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 
     private void EndDrawing()

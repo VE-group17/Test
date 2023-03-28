@@ -185,9 +185,9 @@ namespace Ubiq.XR
                         }
                         else // Down ladder
                         {
-                            worldDir = headCamera.transform.TransformDirection(0, 0.7f * dir.y, -0.2f);
+                            worldDir = headCamera.transform.TransformDirection(0, 0.7f * dir.y, 0.2f* dir.y);
                         }
-                        worldDir.z = 0;
+                        //worldDir.z = 0;
                         worldDir.x = 0;
                         var distance = (joystickFlySpeed * Time.deltaTime);
                         transform.position += distance * worldDir.normalized;
