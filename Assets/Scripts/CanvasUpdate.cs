@@ -14,7 +14,7 @@ public class CanvasUpdate : MonoBehaviour
     void Start()
     {
         renderTexture = StrokeCamera.targetTexture;
-        texture2 = new Texture2D(renderTexture.width, renderTexture.height);
+        texture2 = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGBA64, false);
 
         count = 0;
     }
@@ -25,7 +25,7 @@ public class CanvasUpdate : MonoBehaviour
         RenderTexture.active = renderTexture;
         texture2.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height),0,0);
         texture2.Apply();
-        RenderTexture.active = null;
+        // RenderTexture.active = null;
 
 
         // Graphics.Blit(texture2, renderTexture);
