@@ -60,7 +60,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
         else
         {
             GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
+            GetComponent<Rigidbody>().useGravity = false;
         }
         
     }
@@ -79,7 +79,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
         else
         {
             GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
+            GetComponent<Rigidbody>().useGravity = false;
         }
     }
 

@@ -109,7 +109,7 @@ public class roller : MonoBehaviour, IGraspable, IUseable
                 if (_touch.transform.CompareTag("Whiteboard"))
                 
             {
-                GetComponent<Rigidbody>().isKinematic = true;
+               // GetComponent<Rigidbody>().isKinematic = true;
                 if (_whiteboard == null)
                 {
                     _whiteboard = _touch.transform.GetComponent<Whiteboard>();
