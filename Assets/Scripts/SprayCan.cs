@@ -73,11 +73,17 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     }
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
     {
+        Debug.Log("process");
         var data = msg.FromJson<Message>();
         transform.position = data.position;
         transform.rotation = data.rotation;
         var remoteBrushString = data.brushString;
         ownerID = data.ownerID;
+        if (ownerID == "")
+        {
+            Debug.Log("ownerid = kong in process");
+            
+        }
 		// if (Input.GetMouseButton(0)) {
 		// 	BeginDrawing();
 		// }
@@ -91,7 +97,7 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         {
             EndDrawing();
         }
-        if(owner && (myID != ownerID))
+        if(owner && (myID != ownerID) && ownerID != "")
         {
             Release();
             // Debug.Log("Released! ");
@@ -100,12 +106,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     private void FixedUpdate()
     {
+        //Debug.Log("FIXED");
         if (owner)
         {
             // new
             // float[][] brushArray = brushList.ToArray();
             string brushString = string.Join("|", this.brushList.ConvertAll(tuple => string.Join(",", tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4, tuple.Item5, tuple.Item6, tuple.Item7, tuple.Item8)));
-            // Debug.Log(brushString);
+             Debug.Log("sendddddddddddddddddddddddddddd");
             context.SendJson(new Message(transform,isDrawing:currentDrawing,myID,brushString));
             currentDrawing = null;
             this.brushList = new List<(float, float, float, float, float, float, float, float)>();
@@ -113,11 +120,13 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         }
         if (ownerID=="")
         {
+            Debug.Log("fixEMPTY");
             GetComponent<Collider>().isTrigger = false;
             GetComponent<Rigidbody>().useGravity = true;
         }
-        else
+        if (ownerID != "")
         {
+            Debug.Log("fixfull");
             GetComponent<Collider>().isTrigger = true;
             GetComponent<Rigidbody>().useGravity = false;
         }
@@ -136,8 +145,9 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
 
     void IGraspable.Grasp(Hand controller)
     {
+        Debug.Log("grasp");
         if (!released)
-        {        
+        {     
             owner = true;
             this.controller = controller;
 
@@ -148,21 +158,31 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
         else
         {
             ownerID = "";
+            Debug.Log("ownerid = kong in grasp");
+
             this.controller = null;
         }
     }
 
     void IGraspable.Release(Hand controller)
+
     {
+        Debug.Log("Releasssssssss");
         owner = false;
-        ownerID = "";
         this.controller = null;
         released = false;
+        if (!released) 
+        {
+            ownerID = "";
+            Debug.Log("ownerid = kong in release");
+        }
         // GetComponent<Rigidbody>().useGravity = true;
+
     }
 
     void Release() //被动release，因为别人拿走了
     {
+        Debug.Log("PassiveRRRR");
         owner = false; // new
         this.controller = null;
         released = true;
