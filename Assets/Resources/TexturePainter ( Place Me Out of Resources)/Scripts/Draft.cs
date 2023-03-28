@@ -309,7 +309,9 @@ public class Draft : MonoBehaviour
         edge_sp1 = getedge(sp1);
         edge_sp2 = getedge(sp2);
         context = NetworkScene.Register(this);
+        cur_sprite = spnone;
     }
+
     public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
     {
         // 3. Receive and use transform update messages from remote users
