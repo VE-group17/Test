@@ -97,7 +97,7 @@ public class roller : MonoBehaviour, IGraspable, IUseable
               //  print(wall_color);
                 Transform brush = transform.GetChild(5).GetChild(0).GetComponent<Transform>();
                 brush.GetComponent<Renderer>().material.color = paint_color;
-                paint_color = (1f - mix_coef) * wall_color + mix_coef * paint_color;
+                //paint_color = (1f - mix_coef) * wall_color + mix_coef * paint_color;
                 _colors = Enumerable.Repeat(paint_color, _penSize * _penSize).ToArray();
                 // print(brush.name);
                 // transform.GetComponent<Material>().color = paint_color;
