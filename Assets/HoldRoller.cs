@@ -13,6 +13,10 @@ public class HoldRoller : MonoBehaviour, IGraspable
     public GameObject AvatarManager;
     public string myID;
     public string ownerID;
+    private string player1;
+    private string player2;
+    private int myPlayerID;
+    private bool released;
 
     // new
     // 1. Define a message format. Let's us know what to expect on send and recv
@@ -23,23 +27,29 @@ public class HoldRoller : MonoBehaviour, IGraspable
 
         public string ownerID;
         public bool isHolding; // someone is holding
+        public string player1;
+        public string player2;
 
-        public Message(Transform transform, bool isHolding, string ownerID)
+        public Message(Transform transform, bool isHolding, string ownerID, string player1, string player2)
         {
             this.position = transform.position;
             this.rotation = transform.rotation;
 
             this.isHolding = isHolding;
             this.ownerID = ownerID;
+            this.player1 = player1;
+            this.player2 = player2;
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        player1 = "";
+        player2 = "";
+        released = false;
         context = NetworkScene.Register(this);
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
-        Debug.Log("my ID: "+myID);
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
@@ -49,37 +59,55 @@ public class HoldRoller : MonoBehaviour, IGraspable
         var data = msg.FromJson<Message>();
         transform.position = data.position;
         transform.rotation = data.rotation;
-        ownerID = data.ownerID;
+    
 
-        // if someone is holding, and that is not local player, change local object component
-        if(data.isHolding && !owner) 
+        if (data.player1 != "" && data.player2 != "")
         {
-            GetComponent<Collider>().isTrigger = true;
-            GetComponent<Rigidbody>().useGravity = false;
+            var prev_ID = ownerID;
+            ownerID = data.ownerID;
+            if (owner && (prev_ID != ownerID) && ownerID != "" && myID != ownerID && myID == prev_ID)
+            {
+                Release();
+                // Debug.Log("Released! ");
+            }
+            //GetComponent<Collider>().isTrigger = true;
+            //GetComponent<Rigidbody>().useGravity = false;
         }
-        else
+        else if ((data.player2 == myID && data.player1 == "") || (data.player1 == myID && data.player2 == ""))
         {
-            GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
+            transform.position = data.position;
+            transform.rotation = data.rotation;
+            ownerID = myID;
+
+            // GetComponent<Collider>().isTrigger = true;
+            //GetComponent<Rigidbody>().useGravity = false;
         }
-        
+        else if ((data.player2 != "" && data.player2 != myID && data.player1 == "") || (data.player1 != "" && data.player1 != myID && data.player2 == ""))
+        {
+            transform.position = data.position;
+            transform.rotation = data.rotation;
+
+            ownerID = data.ownerID;
+
+            // GetComponent<Collider>().isTrigger = true;
+            // GetComponent<Rigidbody>().useGravity = false;
+        }
+        else if (player1 == "" && player2 == "")
+        {
+            // GetComponent<Collider>().isTrigger = false;
+            // GetComponent<Rigidbody>().useGravity = false;
+        }
+
+
     }
 
     // FixedUpdate 比 Update 早。OnTrigger 和 OnCollision 在 FixedUpdate 里
     private void FixedUpdate()
     {
-        if (owner)
+        if (player1 == myID || player2 == myID || (player2 == "" && player1 == ""))
         {
             // 4. Send transform update messages if we are the current 'owner'
-            context.SendJson(new Message(transform,owner,myID));
-
-            GetComponent<Collider>().isTrigger = true;
-            GetComponent<Rigidbody>().useGravity = false;
-        }
-        else
-        {
-            GetComponent<Collider>().isTrigger = false;
-            GetComponent<Rigidbody>().useGravity = true;
+            context.SendJson(new Message(transform,owner,myID, this.player1, this.player2));
         }
     }
 
@@ -108,10 +136,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
             transform.position = controller.transform.position + hand_roller_offset;
             transform.rotation = controller.transform.rotation;
         }
-        if(owner & (myID != ownerID))
-        {
-            Release();
-        }
+
     }
 
     // Scene Rendering
@@ -120,22 +145,54 @@ public class HoldRoller : MonoBehaviour, IGraspable
 
     void IGraspable.Grasp(Hand controller)
     {
-        Debug.Log("grasp");
-        // 5. Define ownership as 'who holds the item currently'
-        owner = true; // new
-        this.controller = controller;
+        if (player1 == "")
+        {
+            player1 = myID;
+            myPlayerID = 1;
+        }
+        else if (player2 == "")
+        {
+            player2 = myID;
+            myPlayerID = 2;
+        }
+        if (!released)
+        {
+            owner = true;
+            this.controller = controller;
 
-        ownerID = myID;
+            ownerID = myID;
+            FixedUpdate();
+            // GetComponent<Rigidbody>().useGravity = false;
+        }
+        else
+        {
+            ownerID = "";
+
+            this.controller = null;
+        }
     }
 
     void IGraspable.Release(Hand controller)
     {
-        print("release");
-        // As 5. above, define ownership as 'who holds the item currently'
-        owner = false; // new
-        this.controller = null;
+        if (myPlayerID == 1)
+        {
+            player1 = "";
+        }
+        else if (myPlayerID == 2)
+        {
+            player2 = "";
+        }
+        myPlayerID = 0;
 
+        owner = false;
+        this.controller = null;
+        // released = false;
+        // if (!released) 
+        // {
         ownerID = "";
+        //     Debug.Log("ownerid = kong in release");
+        // }
+        // GetComponent<Rigidbody>().useGravity = true;
 
     }
 
@@ -143,5 +200,6 @@ public class HoldRoller : MonoBehaviour, IGraspable
     {
         owner = false; // new
         this.controller = null;
+        released = true;
     }
 }
