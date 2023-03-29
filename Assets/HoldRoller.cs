@@ -1,24 +1,28 @@
 using UnityEngine;
-// using UnityEngine.Events;
 using Ubiq.XR;
 using Ubiq.Messaging; // new
 
 public class HoldRoller : MonoBehaviour, IGraspable
-{
-    private NetworkContext context; // new
-    private bool owner; // new
+{    
+    // context holds address of this object on the network, allow send messages
+    private NetworkContext context; 
+    // if the local user is the owner of this object
+    private bool owner; 
     private Hand controller;
+    // for developer to adjust the offset between hand and object
     public Vector3 hand_roller_offset;
     
+    // drag the GameObject in the unity to have the access of avatar spawned
     public GameObject AvatarManager;
+    // store different ID and keep track of the ownerID for the ability of grasping object directly from one's hand
     public string myID;
     public string ownerID;
     private string player1;
     private string player2;
     private int myPlayerID;
+    // if the object that local user currently holding is grasped by another user, it passively release
     private bool released;
 
-    // new
     // 1. Define a message format. Let's us know what to expect on send and recv
     private struct Message
     {
@@ -60,10 +64,14 @@ public class HoldRoller : MonoBehaviour, IGraspable
         transform.position = data.position;
         transform.rotation = data.rotation;
     
-
+        // if both are holding
         if (data.player1 != "" && data.player2 != "")
         {
+            // track who is the one previously own the object
             var prev_ID = ownerID;
+            // assign the new ownerID, since one will process message only if others are sending message
+            // and the purpose of this is to check if I was previously holding it and other is taking from us
+            // if that is the case, passively release it
             ownerID = data.ownerID;
             if (owner && (prev_ID != ownerID) && ownerID != "" && myID != ownerID && myID == prev_ID)
             {
@@ -73,6 +81,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
             //GetComponent<Collider>().isTrigger = true;
             //GetComponent<Rigidbody>().useGravity = false;
         }
+        // if I am the only one who holding it
         else if ((data.player2 == myID && data.player1 == "") || (data.player1 == myID && data.player2 == ""))
         {
             transform.position = data.position;
@@ -82,6 +91,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
             // GetComponent<Collider>().isTrigger = true;
             //GetComponent<Rigidbody>().useGravity = false;
         }
+        // if I am not holding it, other does
         else if ((data.player2 != "" && data.player2 != myID && data.player1 == "") || (data.player1 != "" && data.player1 != myID && data.player2 == ""))
         {
             transform.position = data.position;
@@ -92,6 +102,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
             // GetComponent<Collider>().isTrigger = true;
             // GetComponent<Rigidbody>().useGravity = false;
         }
+        // if no one is holding
         else if (player1 == "" && player2 == "")
         {
             // GetComponent<Collider>().isTrigger = false;
@@ -101,9 +112,10 @@ public class HoldRoller : MonoBehaviour, IGraspable
 
     }
 
-    // FixedUpdate 比 Update 早。OnTrigger 和 OnCollision 在 FixedUpdate 里
+    // FixedUpdate runs earlier than Update. OnTrigger and OnCollision update in FixedUpdate
     private void FixedUpdate()
     {
+        // if I am the one holding it, or no one is holding it. pass the ownership
         if (player1 == myID || player2 == myID || (player2 == "" && player1 == ""))
         {
             // 4. Send transform update messages if we are the current 'owner'
@@ -111,26 +123,10 @@ public class HoldRoller : MonoBehaviour, IGraspable
         }
     }
 
-    // Update 在 FixedUpdate 之后，包含了 ProcessAnimation
-    // private void Update()
-    // {
-    //     if (owner)
-    //     {
-    //         // 4. Send transform update messages if we are the current 'owner'
-    //         // context.SendJson(new Message(transform,owner));
-    //         GetComponent<Collider>().isTrigger = true;
-    //         GetComponent<Rigidbody>().useGravity = false;
-    //     }
-    //     else
-    //     {
-    //         GetComponent<Collider>().isTrigger = false;
-    //         GetComponent<Rigidbody>().useGravity = true;
-    //     }
-    // }
-
-    // LateUpdate 在 Update 之后
+    // LateUpdate is after Update
     private void LateUpdate()
     {
+        // controller will be true only if user do the Grasp action, so when user grasp object, the object follows controller transform
         if (controller)
         {
             transform.position = controller.transform.position + hand_roller_offset;
@@ -141,20 +137,20 @@ public class HoldRoller : MonoBehaviour, IGraspable
 
     // Scene Rendering
 
-    // 回到 FixedUpdate
-
+    // play is grasping
     void IGraspable.Grasp(Hand controller)
     {
-        if (player1 == "")
+        if (player1 == "") // if previously no one is holding it
         {
             player1 = myID;
             myPlayerID = 1;
         }
-        else if (player2 == "")
+        else if (player2 == "") // if someone is already holding it, place me to the second order
         {
             player2 = myID;
             myPlayerID = 2;
         }
+        // if no one is taking from me
         if (!released)
         {
             owner = true;
@@ -164,7 +160,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
             FixedUpdate();
             // GetComponent<Rigidbody>().useGravity = false;
         }
-        else
+        else // if someone is taking from me
         {
             ownerID = "";
 
@@ -172,8 +168,9 @@ public class HoldRoller : MonoBehaviour, IGraspable
         }
     }
 
-    void IGraspable.Release(Hand controller)
+    void IGraspable.Release(Hand controller) // release controll by the contoller trigger
     {
+        // empty my playerID
         if (myPlayerID == 1)
         {
             player1 = "";
@@ -196,9 +193,9 @@ public class HoldRoller : MonoBehaviour, IGraspable
 
     }
 
-    void Release() //被动release，因为别人拿走了
+    void Release() //passively release, since someone taking from me
     {
-        owner = false; // new
+        owner = false;
         this.controller = null;
         released = true;
     }
