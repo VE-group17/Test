@@ -80,7 +80,6 @@ public class SprayCan : MonoBehaviour, IGraspable, IUseable
     public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
     {
         myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
-        Debug.Log("process");
         var data = msg.FromJson<Message>();
 
         if (data.player1 != "" && data.player2 != "")
