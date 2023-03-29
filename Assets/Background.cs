@@ -5,21 +5,23 @@ using UnityEngine.UIElements;
 
 public class Background : MonoBehaviour
 {
-    private GameObject background;
+    //private GameObject background;
     public GameObject brushContainer;
     public Camera canvasCam;
+    public float offset_x;
+    public float offset_y;
     // Start is called before the first frame update
     void Start()
     {
-        background = (GameObject)Instantiate(Resources.Load("TexturePainter-Instances/UCL"));
-        background.transform.parent = brushContainer.transform;
-        background.transform.localPosition = new Vector3(-canvasCam.orthographicSize, -canvasCam.orthographicSize, 0.001f);
-        background.transform.localScale = Vector3.one * 0.05f;
+        offset_x = 0.24f;
+        offset_y = 0.0824f;
+        this.transform.parent = brushContainer.transform;
+        this.transform.localPosition = new Vector3(-canvasCam.orthographicSize + offset_x, -canvasCam.orthographicSize + offset_y, 0.001f);
+        this.transform.localScale = Vector3.one * 0.05f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

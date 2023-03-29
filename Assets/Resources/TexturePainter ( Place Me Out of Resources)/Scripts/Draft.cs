@@ -9,13 +9,15 @@ using System.Security.Cryptography;
 
 public class Draft : MonoBehaviour
 {
-    public Sprite UclSprite, LenaSprite, spnone;
-    private Sprite edge_sp1, edge_sp2;
+    public Sprite sp1, sp2, sp3, spnone;
+    private Sprite edge_sp1, edge_sp2, edge_sp3;
     double toAngle = 180.0 / Math.PI;
     private Sprite cur_sprite;
     private NetworkContext context; // new
     private bool owner; // new
     private Hand controller;
+    public int selectnumber;
+    public bool use_edge = false;
     private struct Message
     {
         public Vector3 position;
@@ -230,8 +232,9 @@ public class Draft : MonoBehaviour
     {
         Texture2D denoise_Texture = Gaussian_denoise(originalTexture);
         double[,] intensity_gradients = Sobel_filter_nonmax(denoise_Texture);
-        double highThreshold = 0.15;
-        double lowThreshold = 0.05;
+        double highThreshold = 0.2;
+        double lowThreshold = 0.09;
+        bool[,] is_edge = new bool[denoise_Texture.width, denoise_Texture.height];
         Texture2D modifiedTexture = new Texture2D(denoise_Texture.width, denoise_Texture.height);
 
         int[,] offsets = new int[,]
@@ -255,7 +258,7 @@ public class Draft : MonoBehaviour
                     if (intensity_gradients[x, y] < lowThreshold)
                     {
                         // non edge
-                        pixel_color = Color.white;
+                        is_edge[x, y] = false;
                     }
                     else
                     {
@@ -272,21 +275,48 @@ public class Draft : MonoBehaviour
                         }
                         if (neigh_high == true)
                         {
-                            pixel_color = Color.black;
+                            is_edge[x, y] = true;
                         } else
                         {
-                            pixel_color = Color.white;
+                            is_edge[x, y] = false;
                         }
                     }
                 }
                 else
                 {
+                    is_edge[x, y] = true;
+                }
+                // Apply edge detection algorithm to pixel color and set the modified color in modified texture
+                // ...
+            }
+        }
+        // Enhance edge
+        for (int y = 0; y < denoise_Texture.height; y++)
+        {
+            for (int x = 0; x < denoise_Texture.width; x++)
+            {
+                Color pixel_color = Color.white;
+                if (is_edge[x, y] == true)
+                {
                     pixel_color = Color.black;
+                }
+                else
+                {
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        int nx = x + offsets[i, 0];
+                        int ny = y + offsets[i, 1];
+                        if (nx >= 0 && ny >= 0 && nx < denoise_Texture.width && ny < denoise_Texture.height)
+                        {
+                            if (is_edge[nx, ny] == true)
+                            {
+                                pixel_color = Color.black;
+                            }
+                        }
+                    }
                 }
                 pixel_color.a = 0.7f;
                 modifiedTexture.SetPixel(x, y, pixel_color);
-                // Apply edge detection algorithm to pixel color and set the modified color in modified texture
-                // ...
             }
         }
         modifiedTexture.Apply();
@@ -297,7 +327,7 @@ public class Draft : MonoBehaviour
     {
         Texture2D originalTexture = cur_sprite.texture;
         Texture2D modifiedTexture = Canny_edge(originalTexture);
-        Sprite edge_sprite = Sprite.Create(modifiedTexture, new Rect(0, 0, originalTexture.width, originalTexture.height), Vector2.zero);
+        Sprite edge_sprite = Sprite.Create(modifiedTexture, new Rect(0, 0, originalTexture.width, originalTexture.height), new Vector2(0.5f, 0.5f));
 
         // Apply edge detection algorithm to original texture and save result in modified texture
         modifiedTexture.Apply();
@@ -306,10 +336,13 @@ public class Draft : MonoBehaviour
 
     void Start()
     {
-        edge_sp1 = getedge(UclSprite);
-        edge_sp2 = getedge(LenaSprite);
+        edge_sp1 = getedge(sp1);
+        edge_sp2 = getedge(sp2);
+        edge_sp3 = getedge(sp3);
         context = NetworkScene.Register(this);
         cur_sprite = spnone;
+        selectnumber = 2;
+        use_edge = false;
     }
 
     public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
@@ -321,15 +354,44 @@ public class Draft : MonoBehaviour
         transform.rotation = data.rotation;
     }
 
-    void Update()
+    public void None_image()
+    {
+        selectnumber = 0;
+    }
+
+    public void image_2()
+    {
+        selectnumber = 1;
+    }
+
+    public void image_3()
+    {
+        selectnumber = 2;
+    }
+    public void image_4()
+    {
+        selectnumber = 3;
+    }
+
+    public void Original()
+    {
+        use_edge = false;
+    }
+
+    public void edge()
+    {
+        use_edge = true;
+    }
+
+    public void keybord_operator()
     {
         if (Input.GetKeyDown(KeyCode.U))
         {
-            cur_sprite = UclSprite;
+            cur_sprite = sp1;
         }
         if (Input.GetKeyDown(KeyCode.I))
         {
-            cur_sprite = LenaSprite;
+            cur_sprite = sp2;
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -343,19 +405,49 @@ public class Draft : MonoBehaviour
         {
             cur_sprite = edge_sp2;
         }
-        GetComponent<SpriteRenderer>().sprite = cur_sprite;
     }
 
-    public void UCL_btn()
+    void UI_operate()
     {
-        cur_sprite = UclSprite;
-        GetComponent<SpriteRenderer>().sprite = cur_sprite;
+        if (selectnumber == 0)
+        {
+            cur_sprite = spnone;
+        } else if (selectnumber == 1){
+            cur_sprite = sp1;
+        } else if (selectnumber == 2)
+        {
+            cur_sprite = sp2;
+        } else if (selectnumber == 3)
+        {
+            cur_sprite = sp3;
+        }
+
+        if (use_edge)
+        {
+            if (selectnumber == 0)
+            {
+                cur_sprite = spnone;
+            }
+            else if (selectnumber == 1)
+            {
+                cur_sprite = edge_sp1;
+            }
+            else if (selectnumber == 2)
+            {
+                cur_sprite = edge_sp2;
+            }
+            else if (selectnumber == 3)
+            {
+                cur_sprite = edge_sp3;
+            }
+        }
     }
 
-    public void Lena_btn()
+    void Update()
     {
-        cur_sprite = LenaSprite;
+        //keybord_operator();
+        UI_operate();
+
         GetComponent<SpriteRenderer>().sprite = cur_sprite;
     }
-
 }
