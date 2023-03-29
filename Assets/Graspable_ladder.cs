@@ -8,10 +8,10 @@ using Ubiq.Messaging;
 // option.
 public class Graspable_ladder : MonoBehaviour, IGraspable
 {
-    public bool grap_ladder = false;
-    private Hand controller;
-    private NetworkContext context; // new
-    private bool owner; // new
+    public bool grap_ladder = false; // If someone grab ladder (It used in player movement script -- make player cannont move and grab at same time)
+    private Hand controller; // VR hand controller
+    private NetworkContext context; // Network
+    private bool owner; // If someone grab ladder 
     private Vector3 hand_offset;
 
     // 1. Define a message format. Let's us know what to expect on send and recv
@@ -27,7 +27,6 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         }
     }
 
-    // new
     private void Start()
     {
         // 2. Register the object with the network scene. This provides a
@@ -37,7 +36,6 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         hand_offset = new Vector3(-1f, 0f, 0.3f);
     }
 
-    // new
     public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
     {
         // 3. Receive and use transform update messages from remote users
@@ -47,31 +45,30 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         transform.rotation = data.rotation;
     }
 
-    // new
+    // 4. Send transform update messages if we are the current 'owner'
     private void FixedUpdate()
     {
         if (owner)
         {
-            // 4. Send transform update messages if we are the current 'owner'
             context.SendJson(new Message(transform));
         }
     }
 
-
+    // Update position of ladder
     private void LateUpdate()
     {
         if (controller)
         {
-            Vector3 position_new = controller.transform.position+hand_offset;
-            position_new.y = transform.position.y;
-            transform.position = position_new;
+            Vector3 position_new = controller.transform.position + hand_offset; // same position with hand with offset
+            position_new.y = transform.position.y; // cannot change y direction, just move on ground
+            transform.position = position_new;  // update
         }
     }
 
     void IGraspable.Grasp(Hand controller)
     {
         // 5. Define ownership as 'who holds the item currently'
-        owner = true; // new
+        owner = true;
         this.controller = controller;
         grap_ladder = true;
     }
@@ -79,12 +76,8 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
     void IGraspable.Release(Hand controller)
     {
         // As 5. above, define ownership as 'who holds the item currently'
-        owner = false; // new
+        owner = false;
         this.controller = null;
         grap_ladder = false;
     }
-
-    // Note about ownership: 'ownership' is just one way of designing this
-    // kind of script. It's sometimes a useful pattern, but has no special
-    // significance outside of this file or in Ubiq more generally.
 }

@@ -9,15 +9,15 @@ using System.Security.Cryptography;
 
 public class Draft : MonoBehaviour
 {
-    public Sprite sp1, sp2, sp3, spnone;
-    private Sprite edge_sp1, edge_sp2, edge_sp3;
-    double toAngle = 180.0 / Math.PI;
-    private Sprite cur_sprite;
-    private NetworkContext context; // new
-    private bool owner; // new
+    public Sprite sp1, sp2, sp3, spnone; // original sprite image
+    private Sprite edge_sp1, edge_sp2, edge_sp3; // edge sprite image
+    double toAngle = 180.0 / Math.PI; // pi to angle
+    private Sprite cur_sprite; // sprite for this gameobject
+    private NetworkContext context; 
+    private bool owner; 
     private Hand controller;
-    public int selectnumber;
-    public bool use_edge = false;
+    public int selectnumber; // for UI to choose which sprite 
+    public bool use_edge = false; // edge or original
     private struct Message
     {
         public Vector3 position;
@@ -34,7 +34,9 @@ public class Draft : MonoBehaviour
     Texture2D Gaussian_denoise(Texture2D originalTexture)
     {
         Texture2D modifiedTexture = new Texture2D(originalTexture.width, originalTexture.height);
+        // Gaussian fillter weights
         Vector3 weight_dis = new Vector3(0.20417996f, 0.1238414f, 0.07511361f);
+        // x direction
         int[,] offsets_d1 = new int[,]
         {
             {-1, 0},
@@ -42,6 +44,7 @@ public class Draft : MonoBehaviour
             {0, -1},
             {0, 1}
         };
+        // y direction
         int[,] offsets_d2 = new int[,]
         {
             {-1, -1},
@@ -56,10 +59,12 @@ public class Draft : MonoBehaviour
             {
                 if (x == 0 || y == 0 || x == originalTexture.width - 1 || y == originalTexture.height - 1)
                 {
+                    // boudary
                     pixel_color = originalTexture.GetPixel(x, y);
                 }
                 else
                 {
+                    // wighted sum of gaussian filtter
                     pixel_color = originalTexture.GetPixel(x, y) * weight_dis[0];
                     for (int i = 0; i < 4; ++i)
                     {
@@ -86,7 +91,9 @@ public class Draft : MonoBehaviour
         double[,] gd = new double[denoise_Texture.width, denoise_Texture.height];
         double[,] nonmax_gd = new double[denoise_Texture.width, denoise_Texture.height];
         byte[,] orients = new byte[denoise_Texture.width, denoise_Texture.height];
+        // Sobel weight
         int[] weight = new int[] { 2, -2, 1, 1, -1, -1 };
+        // Sobel x direction with weight
         int[,] offsets_d1 = new int[,]
         {
             {1, 0},
@@ -96,6 +103,7 @@ public class Draft : MonoBehaviour
             {-1, 1},
             {-1, -1}
         };
+        // Sobel y direction with weight
         int[,] offsets_d2 = new int[,]
         {
             {0, 1},
@@ -108,6 +116,8 @@ public class Draft : MonoBehaviour
         double cur_value = 0;
         double ma_value = -10000000;
         double mi_value = 10000000;
+
+        // sobel filter to get gradient
         for (int y = 0; y < denoise_Texture.height; y++)
         {
             for (int x = 0; x < denoise_Texture.width; x++)
@@ -115,6 +125,7 @@ public class Draft : MonoBehaviour
                 double gx = 0;
                 double gy = 0;
                 double orientation = 0;
+                // boundary is not a edge
                 if (x == 0 || y == 0 || x == denoise_Texture.width - 1 || y == denoise_Texture.height - 1)
                 {
                     cur_value = 0.0f;
@@ -128,12 +139,16 @@ public class Draft : MonoBehaviour
                         int ny = y + offsets_d1[i, 1];
                         gx += denoise_Texture.GetPixel(nx, ny).grayscale * weight[i];
                     }
+                    // sobel filter to get gradient gx
                     for (int i = 0; i < 6; ++i)
                     {
                         int nx = x + offsets_d2[i, 0];
                         int ny = y + offsets_d2[i, 1];
                         gy += denoise_Texture.GetPixel(nx, ny).grayscale * weight[i];
                     }
+                    // sobel filter to get gradient gy
+
+                    // final gradient l2 norm
                     cur_value = Math.Sqrt(gx * gx + gy * gy);
                 }
                 if (ma_value < cur_value)
@@ -180,6 +195,7 @@ public class Draft : MonoBehaviour
                 orients[x, y] = (byte) orientation;
             }
         }
+        // normalise pixel value
         double residual_mami = ma_value - mi_value + 0.0000000001;
         for (int y = 0; y < denoise_Texture.height; y++)
         {
@@ -189,39 +205,39 @@ public class Draft : MonoBehaviour
             }
         }
 
-
+        // Non-maximum Suppression
         for (int y = 1; y < denoise_Texture.height - 1; y++)
         {
             for (int x = 1; x < denoise_Texture.width - 1; x++)
             {
                 double leftPixel = 0;
                 double rightPixel = 0;
-                switch (orients[x, y])
+                switch (orients[x, y]) // which direction 
                 {
-                    case 0:
+                    case 0: // 0 degree
                         leftPixel = gd[x - 1, y];
                         rightPixel = gd[x + 1, y];
                         break;
-                    case 45:
+                    case 45: // 45 degree
                         leftPixel = gd[x - 1, y + 1];
                         rightPixel = gd[x + 1, y - 1];
                         break;
-                    case 90:
+                    case 90: // 90 degree
                         leftPixel = gd[x, y + 1];
                         rightPixel = gd[x, y - 1];
                         break;
-                    case 135:
+                    case 135: // 135 degree
                         leftPixel = gd[x + 1, y + 1];
                         rightPixel = gd[x - 1, y - 1];
                         break;
                 }
                 if ((gd[x, y] < leftPixel) || (gd[x, y] < rightPixel))
                 {
-                    nonmax_gd[x, y] = 0;
+                    nonmax_gd[x, y] = 0; // direction neigbours higher than it
                 }
                 else
                 {
-                    nonmax_gd[x, y] = gd[x, y];
+                    nonmax_gd[x, y] = gd[x, y]; // non-maximum suppression
                 }
             }
         }
@@ -232,11 +248,12 @@ public class Draft : MonoBehaviour
     {
         Texture2D denoise_Texture = Gaussian_denoise(originalTexture);
         double[,] intensity_gradients = Sobel_filter_nonmax(denoise_Texture);
-        double highThreshold = 0.2;
-        double lowThreshold = 0.09;
+        double highThreshold = 0.2; // high threshold
+        double lowThreshold = 0.09; // low threshold
         bool[,] is_edge = new bool[denoise_Texture.width, denoise_Texture.height];
         Texture2D modifiedTexture = new Texture2D(denoise_Texture.width, denoise_Texture.height);
 
+        // 8 8 neighboring offset
         int[,] offsets = new int[,]
         {
             {1, 1},
@@ -248,16 +265,19 @@ public class Draft : MonoBehaviour
             {1, 0},
             {1, 1}
         };
+
+        // Hysteresis Thresholding
         for (int y = 0; y < denoise_Texture.height; y++)
         {
             for (int x = 0; x < denoise_Texture.width; x++)
             {
                 Color pixel_color;
+                // lower than hight treshold, not sure
                 if (intensity_gradients[x,y] < highThreshold)
                 {
                     if (intensity_gradients[x, y] < lowThreshold)
                     {
-                        // non edge
+                        // lower than low treshold, it is not edge
                         is_edge[x, y] = false;
                     }
                     else
@@ -273,23 +293,22 @@ public class Draft : MonoBehaviour
                                 neigh_high = true;
                             }
                         }
-                        if (neigh_high == true)
+                        if (neigh_high == true) // if one neighour is higher than high threshold
                         {
-                            is_edge[x, y] = true;
+                            is_edge[x, y] = true; // it is edge
                         } else
                         {
-                            is_edge[x, y] = false;
+                            is_edge[x, y] = false; // it is not edge
                         }
                     }
                 }
-                else
+                else // higher than hight treshold, it is edge
                 {
                     is_edge[x, y] = true;
                 }
-                // Apply edge detection algorithm to pixel color and set the modified color in modified texture
-                // ...
             }
         }
+
         // Enhance edge
         for (int y = 0; y < denoise_Texture.height; y++)
         {
@@ -298,24 +317,25 @@ public class Draft : MonoBehaviour
                 Color pixel_color = Color.white;
                 if (is_edge[x, y] == true)
                 {
-                    pixel_color = Color.black;
+                    pixel_color = Color.black; // edge to black color
                 }
                 else
                 {
-                    for (int i = 0; i < 8; ++i)
+                    for (int i = 0; i < 8; ++i) // search 8-neigbours connections
                     {
                         int nx = x + offsets[i, 0];
                         int ny = y + offsets[i, 1];
+                        // Within image size
                         if (nx >= 0 && ny >= 0 && nx < denoise_Texture.width && ny < denoise_Texture.height)
                         {
                             if (is_edge[nx, ny] == true)
                             {
-                                pixel_color = Color.black;
+                                pixel_color = Color.black; // bolded
                             }
                         }
                     }
                 }
-                pixel_color.a = 0.7f;
+                pixel_color.a = 0.7f; // Translucent
                 modifiedTexture.SetPixel(x, y, pixel_color);
             }
         }
@@ -325,21 +345,24 @@ public class Draft : MonoBehaviour
 
     Sprite getedge(Sprite cur_sprite)
     {
-        Texture2D originalTexture = cur_sprite.texture;
-        Texture2D modifiedTexture = Canny_edge(originalTexture);
+        Texture2D originalTexture = cur_sprite.texture; // Image texture
+        Texture2D modifiedTexture = Canny_edge(originalTexture); // Get edge by modified Canny edge detection algorithm
+        // Create a new sprite as edge sprite
         Sprite edge_sprite = Sprite.Create(modifiedTexture, new Rect(0, 0, originalTexture.width, originalTexture.height), new Vector2(0.5f, 0.5f));
-
-        // Apply edge detection algorithm to original texture and save result in modified texture
-        modifiedTexture.Apply();
+        // Apply edge texture
+        modifiedTexture.Apply(); 
         return edge_sprite;
     }
 
     void Start()
     {
+        // precalculate edge of an image
         edge_sp1 = getedge(sp1);
         edge_sp2 = getedge(sp2);
         edge_sp3 = getedge(sp3);
+        // Uibq network register
         context = NetworkScene.Register(this);
+        // Initialise sprite as none
         cur_sprite = spnone;
         selectnumber = 0;
         use_edge = false;
@@ -347,13 +370,14 @@ public class Draft : MonoBehaviour
 
     public void ProcessMessage(ReferenceCountedSceneGraphMessage msg)
     {
-        // 3. Receive and use transform update messages from remote users
+        // Receive and use transform update messages from remote users
         // Here we use them to update our current position
         var data = msg.FromJson<Message>();
         transform.position = data.position;
         transform.rotation = data.rotation;
     }
 
+    // UI need function
     public void None_image()
     {
         selectnumber = 0;
@@ -382,7 +406,10 @@ public class Draft : MonoBehaviour
     {
         use_edge = true;
     }
+    //
 
+
+    // Keybord change draft
     public void keybord_operator()
     {
         if (Input.GetKeyDown(KeyCode.U))
@@ -407,6 +434,8 @@ public class Draft : MonoBehaviour
         }
     }
 
+
+    // UI change sprite
     void UI_operate()
     {
         if (selectnumber == 0)
@@ -445,9 +474,8 @@ public class Draft : MonoBehaviour
 
     void Update()
     {
-        //keybord_operator();
-        UI_operate();
-
+        //keybord_operator(); // If we want to use keybord to controll draft
+        UI_operate(); // change sprite by UI
         GetComponent<SpriteRenderer>().sprite = cur_sprite;
     }
 }
