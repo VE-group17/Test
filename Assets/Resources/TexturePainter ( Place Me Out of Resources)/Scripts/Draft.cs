@@ -341,7 +341,7 @@ public class Draft : MonoBehaviour
         edge_sp3 = getedge(sp3);
         context = NetworkScene.Register(this);
         cur_sprite = spnone;
-        selectnumber = 2;
+        selectnumber = 0;
         use_edge = false;
     }
 
