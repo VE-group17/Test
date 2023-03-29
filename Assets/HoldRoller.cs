@@ -53,11 +53,11 @@ public class HoldRoller : MonoBehaviour, IGraspable
         player2 = "";
         released = false;
         context = NetworkScene.Register(this);
-        myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
     }
 
     public void ProcessMessage (ReferenceCountedSceneGraphMessage msg)
     {
+        myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
         // 3. Receive and use transform update messages from remote users
         // Here we use them to update our current position
         var data = msg.FromJson<Message>();
@@ -115,6 +115,7 @@ public class HoldRoller : MonoBehaviour, IGraspable
     // FixedUpdate runs earlier than Update. OnTrigger and OnCollision update in FixedUpdate
     private void FixedUpdate()
     {
+        myID = AvatarManager.gameObject.transform.GetChild(0).gameObject.name.Substring(12);
         // if I am the one holding it, or no one is holding it. pass the ownership
         if (player1 == myID || player2 == myID || (player2 == "" && player1 == ""))
         {
