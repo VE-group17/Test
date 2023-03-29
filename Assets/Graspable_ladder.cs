@@ -12,6 +12,7 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
     private Hand controller;
     private NetworkContext context; // new
     private bool owner; // new
+    private Vector3 hand_offset;
 
     // 1. Define a message format. Let's us know what to expect on send and recv
     private struct Message
@@ -33,6 +34,7 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
         // NetworkID for the object and lets it get messages from remote users
         context = NetworkScene.Register(this);
         grap_ladder = false;
+        hand_offset = new Vector3(-1f, 0f, 0.3f);
     }
 
     // new
@@ -60,7 +62,7 @@ public class Graspable_ladder : MonoBehaviour, IGraspable
     {
         if (controller)
         {
-            Vector3 position_new = controller.transform.position;
+            Vector3 position_new = controller.transform.position+hand_offset;
             position_new.y = transform.position.y;
             transform.position = position_new;
         }

@@ -185,10 +185,10 @@ namespace Ubiq.XR
                         }
                         else // Down ladder
                         {
-                            worldDir = headCamera.transform.TransformDirection(0, 0.7f * dir.y, 0.2f* dir.y);
+                            worldDir = headCamera.transform.TransformDirection(0.0f, 0.7f * dir.y,  0.0f);
                         }
                         //worldDir.z = 0;
-                        worldDir.x = 0;
+                        //worldDir.x = 0;
                         var distance = (joystickFlySpeed * Time.deltaTime);
                         transform.position += distance * worldDir.normalized;
                     }
